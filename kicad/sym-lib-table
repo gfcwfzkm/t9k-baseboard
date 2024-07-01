@@ -1,0 +1,5 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "JS5208")(type "KiCad")(uri "C:/Users/pasca/Downloads/JS5208/JS5208.kicad_sym")(options "")(descr ""))
+  (lib (name "PEC11R-4215F-S0024")(type "KiCad")(uri "C:/Users/pasca/Downloads/PEC11R-4215F-S0024/PEC11R-4215F-S0024.kicad_sym")(options "")(descr ""))
+)

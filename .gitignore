@@ -27,3 +27,11 @@ fp-info-cache
 # Exported BOM files
 *.xml
 *.csv
+
+# Unzipped Gerber files
+/KiCad/Gerber/
+
+# Personal files
+/docs/Unterstützungsantrag.pdf
+/docs/Unterstützungsantrag.docx
+/docs/Unterstützungsantrag FPGA-Devboard.zip
