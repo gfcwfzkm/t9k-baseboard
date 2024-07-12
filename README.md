@@ -1,8 +1,7 @@
 # t9k-baseboard
 Tang Nano 9k Baseboard for Tang Nano 9k FPGA Board.
 
-![](images/3drender_1.png)
-![](images/3drender_2.png)
+![3D Render](images/3drender_3.png)
 
 ## Introduction
 
