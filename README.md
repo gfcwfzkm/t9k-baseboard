@@ -6,9 +6,9 @@ Tang Nano 9k Baseboard for Tang Nano 9k FPGA Board.
 ## Introduction
 
 The main idea is to have a baseboard for the Tang Nano 9k FPGA Board that allows to use it in a more comfortable way.
-The baseboard will feature four PMOD connectors, a rotary encoder, a navigation switch and a WS2812-Style 8mm RGB LED.
+The baseboard will feature four PMOD connectors, a rotary encoder, a navigation switch and a WS2813-Style 8mm RGB LED.
 
-The target goal of this project is to give students and hobbyists a platform to learn and experiment with FPGA technology in a more comfortable and cheap way. This project received support from the Bern University of Applied Sciences (BFH).
+The target goal of this project is to give students and hobbyists a platform to learn and experiment with FPGA technology in a more comfortable and cheap way. This project received support from the [Bern University of Applied Sciences (BFH)](https://www.bfh.ch/ti/en/). Thank you!
 
 With cost being a main target, the Sipeed Tang Nano 9k FPGA Board was chosen as the base for this project. The board is available for around 14$ and features a Gowin GW1NR-9C with 8640 LUT4. The board is also equipped with a 32Mbit SPI Flash, a 27 MHz clock and a USB-C connector for programming and power.
 
