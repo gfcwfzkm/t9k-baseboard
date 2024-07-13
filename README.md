@@ -36,10 +36,12 @@ This section will guide you through the process of starting a new project on the
 
 - Use a project name of your choice and select the path where you want to store the project. Click `Next`.
 
-- When the `Select Device` window pops up, ensure that the final part number is `GW1NR-LV9QN88PC6/I5` and click `Next`.
+- When the `Select Device` window pops up, ensure that the final part number is `GW1NR-LV9QN88PC6/I5` and click `Next`
+
 ![Select Device](images/select_device.png)
 
 - The project is now created and you can start adding files to it. To add or create files, right-click on the project in the `Design` tab and select `New File...`
+
 ![New File](images/new_file.png)
 
 - You can now add a new Verilog or VHDL file to the project. This guide will use VHDL. Name the file `top` (, change the file ending to .vhdl) and click `OK`.
@@ -96,6 +98,7 @@ end architecture RTL;
 - Before the code can be synthesized, the VHDL standard needs to be set to 2008. This is because the math_real library isn't compiled on Gowin EDA for VHDL-1993. To do this, click on `Project -> Configuration` and select `Synthesize -> General`. Set the `VHDL Language` to `VHDL 2008` and click `OK`
 
 - Now you can synthesize the code by clicking on the top tool bar on `Synthesize` or by double-clicking `Synthesize` in the `Process` tab
+
 ![Synthesize](images/synthesize.png)
 
 - **Nice to know:** You can double-click in the `Process` tab the `Synthesis Report` to see the synthesis results and resource usage of the design. In the menu bar `Tools -> Schematic Viewer -> Design Viewer` you can see the schematic of the design, if you are interested in that.
@@ -103,21 +106,26 @@ end architecture RTL;
 - Before `Place & Route` can be done, the pinout of the design needs to be set. To do this, click on `Tools -> Floor Planner` menu item. The tool will warn you that no Constraint File is in the project - click `OK` to create one.
 
 - In the `Floor Planner` window, click on the `Package View` tab to get a overview of the FPGA's pins. To assign the various signals in the VHDL file to the pins, open the `I/O Contraints` tab at the bottom of the window
+
 ![Floor Planner](images/floorplanner_1.png)
 
 - Using the [Pinmap Table](docs/Pinmap.pdf) in the `docs` folder, assign the signals to the pins by either typing the location / pin number or by drag-n-dropping the signals to the pins in the `Package View`. Also pay attention to the voltage level of the signals. The Pinmap Table will tell you if a signal is 3.3V or 1.8V, so you have to set the `IO Type` to either `LVCMOS33` or `LVCMOS18` respectively. As for the `rst_n` signal, this guide will use the on-board button `S1`
+
 ![Screenshot of the Pinout Table](images/floorplanner_2.png)
 ![Screenshot of the I/O Constraints](images/floorplanner_3.png)
 
 - After all the I/Os have been assigned to a location, click on `File -> Save` to save the constraints file. You can now close the `Floor Planner` window
 
 - Now you can do the `Place & Route` by clicking on the top tool bar on `Place & Route` or by double-clicking `Place & Route` in the `Process` tab
+
 ![Place & Route](images/place_and_route.png)
 
 - After the `Place & Route` process has finished, you can download / program the design to the FPGA by clicking on the top tool bar on `Program` or by double-clicking `Program Device` in the `Process` tab
+
 ![Program Device](images/programming.png)
 
-- The `Gowin Programmer` window will open. Click on `USB Cable Settings`, hit `Query/Detect Cable` and click `Save` 
+- The `Gowin Programmer` window will open. Click on `USB Cable Settings`, hit `Query/Detect Cable` and click `Save`
+
 ![Gowin Programmer](images/cable_setting.png)
 
 - You can now click on `Program` (The play-style button) to program the design to the FPGA. The LEDs on the Tang Nano 9k board should now count up and pressing S1 should reset it
