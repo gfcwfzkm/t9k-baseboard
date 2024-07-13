@@ -130,4 +130,4 @@ end architecture RTL;
 
 - You can now click on `Program` (The play-style button) to program the design to the FPGA. The LEDs on the Tang Nano 9k board should now count up and pressing S1 should reset it
 
-Congratulations! You have now successfully created a simple design for the Tang Nano 9k FPGA Board using the Gowin EDA.
+Congratulations! You have now successfully created a simple design for the Tang Nano 9k FPGA Board using the Gowin EDA. You can find the this project and more in the `examples` folder.
