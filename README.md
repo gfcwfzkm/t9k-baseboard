@@ -23,6 +23,8 @@ The project has been designed using KiCad 8.
 
 In the `docs` folder, you will find the [BOM](docs/BOM.pdf) of this project for 10 PCBs, a [PDF schematic](docs/SCHEMA.pdf) of the board and a [Pinmap Table](docs/Pinmap.pdf) to help you assign the various I/Os in code.
 
+Check out the `examples` folder for some example projects to get you started. You can find an [overview of the examples](examples/README.md) there to get started.
+
 ## Getting Started
 If you haven't gotten the board and the components yet, check out the [BOM](docs/BOM.pdf) to see what you need.
 

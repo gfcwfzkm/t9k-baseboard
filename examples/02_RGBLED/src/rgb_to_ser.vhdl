@@ -57,21 +57,36 @@ entity rgb_to_ser is
 end entity rgb_to_ser;
 
 architecture rtl of rgb_to_ser is
-	type state_type is (STATE_IDLE, SET_BIT_HIGH, WAIT_BIT_HIGH,
-		SET_BIT_LOW, WAIT_BIT_LOW, RESET_TRANSMISSION);
+	type state_type is (
+		STATE_IDLE,
+		WAIT_BIT_HIGH,
+		WAIT_BIT_LOW,
+		RESET_TRANSMISSION
+	);
 	
 	CONSTANT COLORDATA_WIDTH : integer := 24;
-	CONSTANT T0H_CYCLES : integer := integer(T0H_TIMING_NS * CLK_FREQ_MHZ);
-	CONSTANT T1H_CYCLES : integer := integer(T1H_TIMING_NS * CLK_FREQ_MHZ);
-	CONSTANT T0L_CYCLES : integer := integer(T0L_TIMING_NS * CLK_FREQ_MHZ);
-	CONSTANT T1L_CYCLES : integer := integer(T1L_TIMING_NS * CLK_FREQ_MHZ);
-	CONSTANT TRESET_CYCLES : integer := integer(TRESET_TIMING_NS * CLK_FREQ_MHZ);
+	CONSTANT T0H_CNT_TOP : integer := integer(round(real(T0H_TIMING_NS * CLK_FREQ_MHZ) / 1000.0)) - 1;
+	CONSTANT T1H_CNT_TOP : integer := integer(round(real(T1H_TIMING_NS * CLK_FREQ_MHZ) / 1000.0)) - 1;
+	CONSTANT T0L_CNT_TOP : integer := integer(round(real(T0L_TIMING_NS * CLK_FREQ_MHZ) / 1000.0)) - 1;
+	CONSTANT T1L_CNT_TOP : integer := integer(round(real(T1L_TIMING_NS * CLK_FREQ_MHZ) / 1000.0)) - 1;
+	CONSTANT TRESET_CNT_TOP : integer := integer(ceil(real(TRESET_TIMING_NS * CLK_FREQ_MHZ) / 1000.0)) - 1;
 
+	signal color_data_arranged						: std_logic_vector(COLORDATA_WIDTH-1 downto 0) := (others => '0');
 	signal state_reg, state_next					: state_type := STATE_IDLE;
 	signal colordata_reg, colordata_next			: std_logic_vector(COLORDATA_WIDTH-1 downto 0) := (others => '0');
-	signal bit_counter_reg, bit_counter_next		: unsigned(integer(ceil(log2(real(COLORDATA_WIDTH)))) downto 0) := (others => '0');
-	signal cycle_counter_reg, cycle_counter_next	: unsigned(integer(ceil(log2(real(TRESET_CYCLES)))) downto 0) := (others => '0');
+	signal bit_counter_reg, bit_counter_next		: unsigned(integer(ceil(log2(real(COLORDATA_WIDTH))))-1 downto 0) := (others => '0');
+	signal cycle_counter_reg, cycle_counter_next	: unsigned(integer(ceil(log2(real(TRESET_CNT_TOP))))-1 downto 0) := (others => '0');
 begin
+
+	with state_reg select rgbled_serdata <=
+		'1' when WAIT_BIT_HIGH,
+		'0' when others;
+	
+	with state_reg select idle <=
+		'1' when STATE_IDLE,
+		'0' when others;
+	
+	color_data_arranged <= red & green & blue;
 
 	REGS : process (clk, reset) begin
 		if reset = '1' then
@@ -87,26 +102,59 @@ begin
 		end if;
 	end process REGS;
 
-	NSL : process (state_reg, colordata_reg, bit_counter_reg, cycle_counter_reg, send_reset, send_data) begin
+	NSL : process (state_reg, colordata_reg, bit_counter_reg, cycle_counter_reg, send_reset, send_data, color_data_arranged) begin
 		state_next <= state_reg;
 		colordata_next <= colordata_reg;
 		bit_counter_next <= bit_counter_reg;
 		cycle_counter_next <= cycle_counter_reg;
 
-		-- Default output values
-		idle <= '0';
-		rgbled_serdata <= '0';
-
 		case state_reg is
 			when STATE_IDLE =>
-				idle <= '1';
-				bit_counter_next <= to_unsigned(COLORDATA_WIDTH, bit_counter_next'length);
 				if (send_reset = '1') then
 					state_next <= RESET_TRANSMISSION;
-					cycle_counter_next <= to_unsigned(TRESET_CYCLES, cycle_counter_next'length);
+					cycle_counter_next <= to_unsigned(TRESET_CNT_TOP, cycle_counter_next'length);
 				elsif (send_data = '1') then
-					state_next <= SET_BIT_HIGH;
-					colordata_next <= red & green & blue;
+					bit_counter_next <= to_unsigned(COLORDATA_WIDTH-1, bit_counter_next'length);
+					colordata_next <= color_data_arranged;
+
+					if (color_data_arranged(COLORDATA_WIDTH-1) = '0') then
+						cycle_counter_next <= to_unsigned(T0H_CNT_TOP, cycle_counter_next'length);
+					else
+						cycle_counter_next <= to_unsigned(T1H_CNT_TOP, cycle_counter_next'length);
+					end if;
+
+					state_next <= WAIT_BIT_HIGH;
+				end if;
+			when WAIT_BIT_HIGH =>
+				if (cycle_counter_reg = 0) then
+					colordata_next <= colordata_reg(COLORDATA_WIDTH-2 downto 0) & '0';
+					if (colordata_reg(COLORDATA_WIDTH-1) = '0') then
+						cycle_counter_next <= to_unsigned(T0L_CNT_TOP, cycle_counter_next'length);
+					else
+						cycle_counter_next <= to_unsigned(T1L_CNT_TOP, cycle_counter_next'length);
+					end if;
+
+					state_next <= WAIT_BIT_LOW;
+				else
+					cycle_counter_next <= cycle_counter_reg - 1;
+				end if;
+			when WAIT_BIT_LOW =>
+				if (cycle_counter_reg = 0) then
+					if (bit_counter_reg = 0) then
+						state_next <= STATE_IDLE;
+					else	
+						bit_counter_next <= bit_counter_reg - 1;
+
+						if (colordata_reg(COLORDATA_WIDTH-1) = '0') then
+							cycle_counter_next <= to_unsigned(T0H_CNT_TOP, cycle_counter_next'length);
+						else
+							cycle_counter_next <= to_unsigned(T1H_CNT_TOP, cycle_counter_next'length);
+						end if;
+
+						state_next <= WAIT_BIT_HIGH;
+					end if;
+				else
+					cycle_counter_next <= cycle_counter_reg - 1;
 				end if;
 			when RESET_TRANSMISSION =>
 				if (cycle_counter_reg = 0) then
@@ -115,45 +163,8 @@ begin
 					cycle_counter_next <= cycle_counter_reg - 1;
 					state_next <= RESET_TRANSMISSION;
 				end if;
-			when SET_BIT_HIGH =>
-				rgbled_serdata <= '1';
-				bit_counter_next <= bit_counter_reg - 1;
-				if (colordata_reg(COLORDATA_WIDTH-1) = '0') then
-					cycle_counter_next <= to_unsigned(T0H_CYCLES, cycle_counter_next'length);
-				else
-					cycle_counter_next <= to_unsigned(T1H_CYCLES, cycle_counter_next'length);
-				end if;
-				state_next <= WAIT_BIT_HIGH;
-			when WAIT_BIT_HIGH =>
-				rgbled_serdata <= '1';
-				if (cycle_counter_reg = 0) then
-					state_next <= SET_BIT_LOW;
-				else
-					cycle_counter_next <= cycle_counter_reg - 1;
-					state_next <= WAIT_BIT_HIGH;
-				end if;
-			when SET_BIT_LOW =>
-				bit_counter_next <= bit_counter_reg - 1;
-				colordata_next <= colordata_reg(COLORDATA_WIDTH-2 downto 0) & '0';
-				if (colordata_reg(COLORDATA_WIDTH-1) = '0') then
-					cycle_counter_next <= to_unsigned(T0L_CYCLES, cycle_counter_next'length);
-				else
-					cycle_counter_next <= to_unsigned(T1L_CYCLES, cycle_counter_next'length);
-				end if;
-				state_next <= WAIT_BIT_LOW;
-			when WAIT_BIT_LOW =>
-				if (cycle_counter_reg = 0) then
-					if (bit_counter_reg = 0) then
-						state_next <= STATE_IDLE;
-					else
-						state_next <= SET_BIT_HIGH;
-					end if;
-				else
-					cycle_counter_next <= cycle_counter_reg - 1;
-					state_next <= WAIT_BIT_LOW;
-				end if;
 			when others =>
-				null;
+				state_next <= STATE_IDLE;
 		end case;
 	end process NSL;
 

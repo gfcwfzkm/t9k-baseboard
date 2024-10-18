@@ -35,3 +35,9 @@ fp-info-cache
 /docs/Unterstützungsantrag.pdf
 /docs/Unterstützungsantrag.docx
 /docs/Unterstützungsantrag FPGA-Devboard.zip
+
+# Gowin files to ignore
+/examples/01_starting_project/impl/gwsynthesis
+/examples/01_starting_project/impl/pnr
+/examples/02_RGBLED/impl/gwsynthesis
+/examples/02_RGBLED/impl/pnr

@@ -1,16 +1,14 @@
--- TEROSHDL Documentation:
---! @title Button Debouncer
+-- TerosHDL Documentation:
+--! @title Debouncer
 --! @author Pascal G. (gfcwfzkm)
 --! @version 1.0
---! @date 29.03.2024
---! @brief Debounces a button input signal
+--! @date 09.10.2024
+--! @brief Debounces an input signal.
 --!
---! This module debounces a button input signal. The debouncing is done by
---! counting the number of consecutive cycles the button is in the same state.
---! If the button is pressed for DEBOUNCE_CNT cycles, the state is set to '1'.
---! If the button is released for DEBOUNCE_CNT cycles, the state is set to '0'.
---! The debouncer also generates events for the button being pressed or released.
---! These events are one cycle wide and are synchronized to the clock.
+--! This module debounces an input signal. 
+--! The input signal is considered stable if it has been in the same state for a certain number of clock cycles.
+--! The number of clock cycles can be configured using the DEBOUNCE_COUNTER_MAX generic.
+--! The debouncing logic is only executed if the deb_en signal is high, allowing the debouncing circuit to be synchronized to certain pulses.
 --!
 
 library ieee;
@@ -20,97 +18,89 @@ use ieee.math_real.all;
 
 entity debouncer is
 	generic (
-		--! Number of cycles until the button is considered pressed/released
-		DEBOUNCE_CNT		: positive	:= 255;
-		--! Clockdivider - counts the clock cycles before the button press is sampled
-		CLKPERIOD 			: positive	:= 10;
-		--! Active-State of the button (logic-level when pressed)
-		BUTTON_ACTIVE_LEVEL	: std_logic	:= '0'
+		--! Number of clock cycles to wait before the input signal is considered stable
+		DEBOUNCE_COUNTER_MAX : positive := 7
 	);
 	port (
-		--! f_fpga clock speed
-		clk			: in std_logic;
-		--! Asynchronous reset (active high)
-		reset		: in std_logic;
+		--! Clock signal
+		clk   : in std_logic;
+		--! Reset signal (active high, asynchronous)
+		reset : in std_logic;
+		
+		--! Input signal to be debounced
+		in_raw : in std_logic;
+		--! Enable debouncing - can be used to synchronize the debouncing circuit to certain pulses.
+		deb_en : in std_logic;
 
-		--! Bouncy button input
-		button		: in std_logic;
-		--! Debounced button state
-		state		: out std_logic;
-		--! Button pressed event
-		released	: out std_logic;
-		--! Button released event
-		pressed		: out std_logic
+		--! Debounced output signal (1 while debounced btn is pressed / high)
+		debounced : out std_logic;
+		--! Active for one clock cycle when the debounced button is released
+		released : out std_logic;
+		--! Active for one clock cycle when the debounced button is pressed
+		pressed : out std_logic
 	);
 end entity debouncer;
 
 architecture rtl of debouncer is
-	--! Button counter register - increased when the button is pressed, decreased when the button is released
-	signal btnCounter_reg	: unsigned(integer(ceil(log2(real(DEBOUNCE_CNT)))) downto 0) := (others => '0');
-	--! Clock Counter register to reduce the sample rate of the bouncy button
-	signal clkCounter_reg	: unsigned(integer(ceil(log2(real(DEBOUNCE_CNT)))) downto 0) := (others => '0');
-	--! Register holding the last valid state of the button. Updated when btnCounter_reg reaches 0 or DEBOUNCE_CNT
-	signal dbState_reg		: std_logic := '0';
-	signal released_reg		: std_logic := '0';
-	signal pressed_reg		: std_logic := '0';
+	--! Debouncer Counter Bit Width
+	constant COUNTER_WIDTH : positive := integer(ceil(log2(real(DEBOUNCE_COUNTER_MAX))));
+
+	--! Debouncer Counter
+	signal counter_reg, counter_next : unsigned(COUNTER_WIDTH-1 downto 0);
+	signal output_reg, output_next : std_logic;
 begin
-	
-	state <= dbState_reg;
-	released <= released_reg;
-	pressed <= pressed_reg;
 
-	--! Button Debouncing Process
-	DEBOUNCER : process(clk, reset) is	
+	--! Output Register Logic
+	debounced <= output_reg;
+
+	CLKREG : process(clk, reset) is
 	begin
-		-- Reset the debouncer
 		if reset = '1' then
-			btnCounter_reg <= (others => '0');
-			clkCounter_reg <= (others => '0');
-			dbState_reg <= '0';			
-			released_reg <= '0';
-			pressed_reg <= '0';
+			counter_reg <= (others => '0');
+			output_reg <= '0';
 		elsif rising_edge(clk) then
-			released_reg <= '0';
-			pressed_reg <= '0';
-
-			-- Clock divider
-			CLKCNT : if unsigned(clkCounter_reg) < CLKPERIOD then
-				clkCounter_reg <= clkCounter_reg + 1;
-			else
-				clkCounter_reg <= to_unsigned(0, clkCounter_reg'length);
-			end if CLKCNT;
-
-			-- Button debouncing by incrementing / decrementing a counter when 
-			-- the button is pressed / released
-			BUTTON_DEBOUNCING : if unsigned(clkCounter_reg) = CLKPERIOD then
-				BUTTON_READING : if button = BUTTON_ACTIVE_LEVEL then
-					OVERFLOW_PREVENTION : if btnCounter_reg /= DEBOUNCE_CNT then
-						btnCounter_reg <= btnCounter_reg + 1;
-					end if OVERFLOW_PREVENTION;
-				else
-					UNDERFLOW_PREVENTION : if btnCounter_reg /= 0 then
-						btnCounter_reg <= btnCounter_reg - 1;
-					end if UNDERFLOW_PREVENTION;
-				end if BUTTON_READING;
-			end if BUTTON_DEBOUNCING;
-
-			-- Generate a short pulse when the button just got pressed
-			EVENT_PRESSED : if btnCounter_reg = DEBOUNCE_CNT and dbState_reg = '0' then
-				pressed_reg <= '1';
-			end if;
-
-			-- Generate a short pulse when the button just got released
-			EVENT_RELEASED : if btnCounter_reg = 0 and dbState_reg = '1' then
-				released_reg <= '1';
-			end if;
-
-			-- Update the general button state
-			STATE_UPDATE : if btnCounter_reg = DEBOUNCE_CNT then
-				dbState_reg <= '1';
-			elsif btnCounter_reg = 0 then
-				dbState_reg <= '0';
-			end if STATE_UPDATE;
+			counter_reg <= counter_next;
+			output_reg <= output_next;
 		end if;
-	end process DEBOUNCER;
+	end process CLKREG;
+
+	--! Debouncer Counter Logic
+	COUNTER : process(counter_reg, output_reg, in_raw, deb_en) is
+	begin
+		counter_next <= counter_reg;
+		output_next <= output_reg;
+		released <= '0';
+		pressed <= '0';
+
+		if in_raw = '1' then
+			-- If input is high, increment counter
+			if counter_reg = DEBOUNCE_COUNTER_MAX then
+				-- If counter reached top, set output register and set pressed-flag for one cycle
+				if output_reg = '0' then
+					pressed <= '1';
+				end if;
+				output_next <= '1';
+			else
+				-- Increment counter if not at top
+				if deb_en = '1' then
+					counter_next <= counter_reg + 1;
+				end if;
+			end if;
+		else
+			-- If input is low, decrement counter
+			if counter_reg = 0 then
+				-- If counter reached bottom, reset output register and set released-flag for one cycle
+				if output_reg = '1' then
+					released <= '1';
+				end if;
+				output_next <= '0';
+			else
+				-- Decrement counter if not at bottom
+				if deb_en = '1' then
+					counter_next <= counter_reg - 1;
+				end if;
+			end if;
+		end if;
+	end process COUNTER;
 
 end architecture;
