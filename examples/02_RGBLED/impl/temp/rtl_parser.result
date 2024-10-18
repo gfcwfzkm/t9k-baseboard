@@ -1,0 +1,72 @@
+[
+ {
+  "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/02_RGBLED/src/top.vhdl",
+  "InstLine" : 18,
+  "InstName" : "top",
+  "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/02_RGBLED/src/top.vhdl",
+  "ModuleLine" : 18,
+  "ModuleName" : "top",
+  "SubInsts" : [
+   {
+    "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/02_RGBLED/src/top.vhdl",
+    "InstLine" : 110,
+    "InstName" : "rgb_to_ser_inst",
+    "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/02_RGBLED/src/rgb_to_ser.vhdl",
+    "ModuleLine" : 19,
+    "ModuleName" : "rgb_to_ser"
+   },
+   {
+    "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/02_RGBLED/src/top.vhdl",
+    "InstLine" : 127,
+    "InstName" : "rotary_enc_inst",
+    "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/02_RGBLED/src/rotary_enc.vhdl",
+    "ModuleLine" : 18,
+    "ModuleName" : "rotary_enc",
+    "SubInsts" : [
+     {
+      "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/02_RGBLED/src/rotary_enc.vhdl",
+      "InstLine" : 54,
+      "InstName" : "DEBOUNCE_A",
+      "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/02_RGBLED/src/debouncer.vhdl",
+      "ModuleLine" : 19,
+      "ModuleName" : "debouncer"
+     },
+     {
+      "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/02_RGBLED/src/rotary_enc.vhdl",
+      "InstLine" : 69,
+      "InstName" : "DEBOUNCE_B",
+      "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/02_RGBLED/src/debouncer.vhdl",
+      "ModuleLine" : 19,
+      "ModuleName" : "debouncer"
+     },
+     {
+      "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/02_RGBLED/src/rotary_enc.vhdl",
+      "InstLine" : 84,
+      "InstName" : "DEBOUNCE_SW",
+      "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/02_RGBLED/src/debouncer.vhdl",
+      "ModuleLine" : 19,
+      "ModuleName" : "debouncer"
+     }
+    ]
+   },
+   {
+    "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/02_RGBLED/src/top.vhdl",
+    "InstLine" : 143,
+    "InstName" : "cycle_colors_inst",
+    "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/02_RGBLED/src/cycle_colors.vhdl",
+    "ModuleLine" : 6,
+    "ModuleName" : "cycle_colors",
+    "SubInsts" : [
+     {
+      "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/02_RGBLED/src/cycle_colors.vhdl",
+      "InstLine" : 62,
+      "InstName" : "hsv_to_rgb_inst",
+      "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/02_RGBLED/src/hsv_to_rgb.vhdl",
+      "ModuleLine" : 6,
+      "ModuleName" : "hsv_to_rgb"
+     }
+    ]
+   }
+  ]
+ }
+]
