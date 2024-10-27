@@ -1,6 +1,2 @@
 kicad/bom/** linguist-generated # Ignore BOM-generated HTML files
 docs/** linguist-documentation # Ignore documentation files
-
-# Detect KiCad
-*.kicad_pcb linguist-detectable
-*.kicad_sch linguist-detectable
