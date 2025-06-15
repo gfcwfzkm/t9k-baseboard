@@ -54,15 +54,15 @@
     "InstLine" : 143,
     "InstName" : "cycle_colors_inst",
     "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/02_RGBLED/src/cycle_colors.vhdl",
-    "ModuleLine" : 6,
+    "ModuleLine" : 19,
     "ModuleName" : "cycle_colors",
     "SubInsts" : [
      {
       "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/02_RGBLED/src/cycle_colors.vhdl",
-      "InstLine" : 62,
+      "InstLine" : 90,
       "InstName" : "hsv_to_rgb_inst",
       "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/02_RGBLED/src/hsv_to_rgb.vhdl",
-      "ModuleLine" : 6,
+      "ModuleLine" : 18,
       "ModuleName" : "hsv_to_rgb"
      }
     ]
