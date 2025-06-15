@@ -1,0 +1,3 @@
+kicad/bom/** linguist-generated # Ignore BOM-generated HTML files
+docs/** linguist-documentation # Ignore documentation files
+examples/** linguist-detectable
