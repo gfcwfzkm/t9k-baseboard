@@ -41,113 +41,113 @@ use ieee.math_real.log2;
 use ieee.math_real.ceil;
 
 entity vtgen is
-	generic (
-		H_VISIBLE	: positive := 1280;	--! Horizontal resolution
-		H_FPORCH	: positive := 110;	--! Horizontal Front Porch
-		H_SYNC		: positive := 40;	--! Horizontal Sync Pulse
-		H_BPORCH	: positive := 220;	--! Horizontal Back Porch
+    generic (
+        H_VISIBLE   : positive := 1280; --! Horizontal resolution
+        H_FPORCH    : positive := 110;  --! Horizontal Front Porch
+        H_SYNC      : positive := 40;   --! Horizontal Sync Pulse
+        H_BPORCH    : positive := 220;  --! Horizontal Back Porch
 
-		V_VISIBLE	: positive := 720;	--! Vertical resolution
-		V_FPORCH	: positive := 5;	--! Vertical Front Porch
-		V_SYNC		: positive := 5;	--! Vertical Sync Pulse
-		V_BPORCH	: positive := 20	--! Vertical Back Porch
-	);
-	port (
-		--! Clock speed required to generate the video signal
-		clk   : in std_logic;
-		--! Ansynchronous, active-high reset
-		reset : in std_logic;
+        V_VISIBLE   : positive := 720;  --! Vertical resolution
+        V_FPORCH    : positive := 5;    --! Vertical Front Porch
+        V_SYNC      : positive := 5;    --! Vertical Sync Pulse
+        V_BPORCH    : positive := 20    --! Vertical Back Porch
+    );
+    port (
+        --! Clock speed required to generate the video signal
+        clk   : in std_logic;
+        --! Ansynchronous, active-high reset
+        reset : in std_logic;
 
-		--! Display-Active signal (active-high)
-		disp_active : out std_logic;
-		--! Currently drawn pixel position. Can be used to control the RGB by an higher architecture
-		disp_x		: out unsigned(integer(ceil(log2(real(H_VISIBLE+H_FPORCH+H_SYNC+H_BPORCH)))) downto 0);
-		--! Currently drawn pixel position. Can be used to control the RGB by an higher architecture
-		disp_y		: out unsigned(integer(ceil(log2(real(V_VISIBLE+V_FPORCH+V_SYNC+V_BPORCH)))) downto 0);
+        --! Display-Active signal (active-high)
+        disp_active : out std_logic;
+        --! Currently drawn pixel position. Can be used to control the RGB by an higher architecture
+        disp_x      : out unsigned(integer(ceil(log2(real(H_VISIBLE+H_FPORCH+H_SYNC+H_BPORCH)))) downto 0);
+        --! Currently drawn pixel position. Can be used to control the RGB by an higher architecture
+        disp_y      : out unsigned(integer(ceil(log2(real(V_VISIBLE+V_FPORCH+V_SYNC+V_BPORCH)))) downto 0);
 
-		--! HDMI V-SYNC signal
-		hdmi_vsync	: out std_logic;
-		--! HDMI H-SYNC signal
-		hdmi_hsync	: out std_logic;
-		--! HDMI DataEnable Signal
-		hdmi_de		: out std_logic
-	);
+        --! HDMI V-SYNC signal
+        hdmi_vsync  : out std_logic;
+        --! HDMI H-SYNC signal
+        hdmi_hsync  : out std_logic;
+        --! HDMI DataEnable Signal
+        hdmi_de     : out std_logic
+    );
 end entity vtgen;
 
 architecture rtl of vtgen is
-	-- Constants for the pixel position calculation
-	--! Horizontal pixel position drawing end
-	constant H_DRAWING_END	: positive := (H_VISIBLE - 1);
-	--! Horizontal pixel position sync start
-	constant H_SYNC_START	: positive := (H_DRAWING_END + H_FPORCH);
-	--! Horizontal pixel position sync end
-	constant H_SYNC_END		: positive := (H_SYNC_START + H_SYNC);
-	--! Maximum horizontal pixel position
-	constant H_MAX : positive := (H_SYNC_END+H_BPORCH);
+    -- Constants for the pixel position calculation
+    --! Horizontal pixel position drawing end
+    constant H_DRAWING_END  : positive := (H_VISIBLE - 1);
+    --! Horizontal pixel position sync start
+    constant H_SYNC_START   : positive := (H_DRAWING_END + H_FPORCH);
+    --! Horizontal pixel position sync end
+    constant H_SYNC_END     : positive := (H_SYNC_START + H_SYNC);
+    --! Maximum horizontal pixel position
+    constant H_MAX : positive := (H_SYNC_END+H_BPORCH);
 
-	--! Vertical pixel position drawing end
-	constant V_DRAWING_END	: positive := (V_VISIBLE - 1);
-	--! Vertical pixel position sync start
-	constant V_SYNC_START	: positive := (V_DRAWING_END + V_FPORCH);
-	--! Vertical pixel position sync end
-	constant V_SYNC_END		: positive := (V_SYNC_START + V_SYNC);
-	--! Maximum vertical pixel position
-	constant V_MAX : positive := (V_SYNC_END+V_BPORCH) - 1;
+    --! Vertical pixel position drawing end
+    constant V_DRAWING_END  : positive := (V_VISIBLE - 1);
+    --! Vertical pixel position sync start
+    constant V_SYNC_START   : positive := (V_DRAWING_END + V_FPORCH);
+    --! Vertical pixel position sync end
+    constant V_SYNC_END     : positive := (V_SYNC_START + V_SYNC);
+    --! Maximum vertical pixel position
+    constant V_MAX : positive := (V_SYNC_END+V_BPORCH) - 1;
 
-	--! Pixel X position register
-	signal disp_x_reg : unsigned(integer(ceil(log2(real(H_MAX)))) downto 0);
-	--! Pixel Y position register
-	signal disp_y_reg : unsigned(integer(ceil(log2(real(V_MAX)))) downto 0);
+    --! Pixel X position register
+    signal disp_x_reg : unsigned(integer(ceil(log2(real(H_MAX)))) downto 0);
+    --! Pixel Y position register
+    signal disp_y_reg : unsigned(integer(ceil(log2(real(V_MAX)))) downto 0);
 begin
-	--! Output of the coordinates. Y is inverted to set the origin to the left bottem corener
-	disp_x <= disp_x_reg;
-	disp_y <= disp_y_reg;
+    --! Output of the coordinates. Y is inverted to set the origin to the left bottem corener
+    disp_x <= disp_x_reg;
+    disp_y <= disp_y_reg;
 
-	--! Pixel Position Counter
-	--! Increments the pixel position registers
-	PIXELMOVE : process (clk, reset) is	begin			
-		if rising_edge(clk) then
-			if reset = '1' then
-				disp_x_reg <= (others => '0');
-				disp_y_reg <= (others => '0');
-			else
-				if (disp_x_reg = H_MAX) then
-					disp_x_reg <= (others => '0');				
-					if (disp_y_reg = V_MAX) then
-						disp_y_reg <= (others => '0');
-					else
-						disp_y_reg <= disp_y_reg + 1;
-					end if;
-				else
-					disp_x_reg <= disp_x_reg + 1;
-				end if;
-			end if;
-		end if;
-	end process PIXELMOVE;
+    --! Pixel Position Counter
+    --! Increments the pixel position registers
+    PIXELMOVE : process (clk, reset) is	begin
+        if rising_edge(clk) then
+            if reset = '1' then
+                disp_x_reg <= (others => '0');
+                disp_y_reg <= (others => '0');
+            else
+                if (disp_x_reg = H_MAX) then
+                    disp_x_reg <= (others => '0');				
+                    if (disp_y_reg = V_MAX) then
+                        disp_y_reg <= (others => '0');
+                    else
+                        disp_y_reg <= disp_y_reg + 1;
+                    end if;
+                else
+                    disp_x_reg <= disp_x_reg + 1;
+                end if;
+            end if;
+        end if;
+    end process PIXELMOVE;
 
-	--! Sync Signal Generator
-	--! Generates the sync signals for the HDMI output
-	SYNCGEN : process (disp_x_reg, disp_y_reg, clk) is begin
-		hdmi_vsync <= '1';
-		hdmi_hsync <= '1';
-		hdmi_de <= '0';
-		disp_active <= '1';
+    --! Sync Signal Generator
+    --! Generates the sync signals for the HDMI output
+    SYNCGEN : process (disp_x_reg, disp_y_reg, clk) is begin
+        hdmi_vsync <= '1';
+        hdmi_hsync <= '1';
+        hdmi_de <= '0';
+        disp_active <= '1';
 
-		if ((disp_x_reg >= H_SYNC_START) and (disp_x_reg < H_SYNC_END)) then
-			hdmi_hsync <= '0';
-		end if;
+        if ((disp_x_reg >= H_SYNC_START) and (disp_x_reg < H_SYNC_END)) then
+            hdmi_hsync <= '0';
+        end if;
 
-		if ((disp_y_reg >= V_SYNC_START) and (disp_y_reg < V_SYNC_END)) then
-			hdmi_vsync <= '0';
-		end if;
+        if ((disp_y_reg >= V_SYNC_START) and (disp_y_reg < V_SYNC_END)) then
+            hdmi_vsync <= '0';
+        end if;
 
-		if ((disp_x_reg <= H_DRAWING_END) and (disp_y_reg <= V_DRAWING_END)) then
-			hdmi_de <= '1';
-		end if;
+        if ((disp_x_reg <= H_DRAWING_END) and (disp_y_reg <= V_DRAWING_END)) then
+            hdmi_de <= '1';
+        end if;
 
-		if (disp_x_reg > H_DRAWING_END) or (disp_y_reg > V_DRAWING_END) then
-			disp_active <= '0';
-		end if;
-	end process SYNCGEN;
+        if (disp_x_reg > H_DRAWING_END) or (disp_y_reg > V_DRAWING_END) then
+            disp_active <= '0';
+        end if;
+    end process SYNCGEN;
 
 end architecture;

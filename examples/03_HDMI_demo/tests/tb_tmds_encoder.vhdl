@@ -35,9 +35,9 @@ architecture behavioral of tb_tmds_encoder is
     signal disp_enable  : std_logic := '0';	--! Display enable signal, active high
     signal hsync        : std_logic := '0';	--! Horizontal sync signal, active high
     signal vsync        : std_logic := '0';	--! Vertical sync signal, active high
-	--! Color data input signal, 8 bits wide
+    --! Color data input signal, 8 bits wide
     signal color_data   : std_logic_vector(7 downto 0) := (others => '0');
-	--! Signals coming from DUT, the encoded TMDS output
+    --! Signals coming from DUT, the encoded TMDS output
     signal tmds_encoded : std_logic_vector(9 downto 0);
     
     -- Testbench control
@@ -60,14 +60,14 @@ begin
 
     --! Test process
     test_proc: process
-		-- Variables needed to parse the CSV file
+        -- Variables needed to parse the CSV file
         file csv_file     : text;
 
-		-- Stimuli generated from the simulation waveform found at the 
-		-- MIT course 6.205 The .FST simulation has been converted to .VDC, with
-		-- its values extracted into a python file. Source of the waveform:
-		-- https://fpga.mit.edu/6205/F24/assignments/hdmi/tmds_ds
-		constant csv_path : string := "stimuli.csv";
+        -- Stimuli generated from the simulation waveform found at the 
+        -- MIT course 6.205 The .FST simulation has been converted to .VDC, with
+        -- its values extracted into a python file. Source of the waveform:
+        -- https://fpga.mit.edu/6205/F24/assignments/hdmi/tmds_ds
+        constant csv_path : string := "stimuli.csv";
         variable csv_line : line;
         variable cycle_num: integer;
         variable data_in  : integer;
@@ -77,7 +77,7 @@ begin
         variable exp_out  : integer;
         variable comma    : character;
         
-		-- Edge case definitions
+        -- Edge case definitions
         type test_vector is record
             data_in  : std_logic_vector(7 downto 0);
             disp_en  : std_logic;
@@ -108,12 +108,12 @@ begin
             (x"01", '1', '0', '0', "1100000000")   -- 00000001
         );
         
-		-- Counters for error reporting
+        -- Counters for error reporting
         variable errors      : natural := 0;
         variable total_tests : natural := 0;
-		variable dc_level 	 : integer := 0;
+        variable dc_level    : integer := 0;
 
-		-- Result we're expecting
+        -- Result we're expecting
         variable exp_vector  : std_logic_vector(9 downto 0);
     begin
         -- Reset sequence
@@ -125,8 +125,8 @@ begin
         -- Test edge cases
         report "Testing edge cases...";
         for i in EDGE_CASES'range loop
-			wait until falling_edge(clk);
-			wait for 1 ns;
+            wait until falling_edge(clk);
+            wait for 1 ns;
             -- Apply inputs
             color_data  <= EDGE_CASES(i).data_in;
             disp_enable <= EDGE_CASES(i).disp_en;
@@ -150,39 +150,39 @@ begin
                     severity error;
                 errors := errors + 1;
             end if;
-			
-			-- Calculate the DC balance to ensure the "DS" part of TMDS is working
-			dc_level := dc_level + count_ones(tmds_encoded) - (10 - count_ones(tmds_encoded));
-			wait for 1 ns;
+            
+            -- Calculate the DC balance to ensure the "DS" part of TMDS is working
+            dc_level := dc_level + count_ones(tmds_encoded) - (10 - count_ones(tmds_encoded));
+            wait for 1 ns;
         end loop;
 
-		-- Final report
-		report "EDGE CASE TEST COMPLETE: " & integer'image(total_tests - errors) & "/" & 
-			   integer'image(total_tests) & " tests passed";
-		if errors = 0 then
+        -- Final report
+        report "EDGE CASE TEST COMPLETE: " & integer'image(total_tests - errors) & "/" & 
+               integer'image(total_tests) & " tests passed";
+        if errors = 0 then
             report "ALL TESTS PASSED" severity note;
         else
             report integer'image(errors) & " TESTS FAILED" severity error;
         end if;
 
-		-- Report DC balance level
-		if dc_level > 8 or dc_level < -8 then
-			report "DC balance level out of range: " & integer'image(dc_level) severity error;
-		else
-			report "DC balance level within acceptable range: " & integer'image(dc_level) severity note;
-		end if;
-		
-		errors := 0;  -- Reset error count for next phase
-		total_tests := 0;
-		dc_level := 0;  -- Reset DC balance level for next phase
+        -- Report DC balance level
+        if dc_level > 8 or dc_level < -8 then
+            report "DC balance level out of range: " & integer'image(dc_level) severity error;
+        else
+            report "DC balance level within acceptable range: " & integer'image(dc_level) severity note;
+        end if;
+        
+        errors := 0;  -- Reset error count for next phase
+        total_tests := 0;
+        dc_level := 0;  -- Reset DC balance level for next phase
 
-		-- Reset for next phase
-		wait until falling_edge(clk);
-		wait for 1 ns;
-		reset <= '1';
-		wait until rising_edge(clk);
-		wait for 1 ns;
-		reset <= '0';
+        -- Reset for next phase
+        wait until falling_edge(clk);
+        wait for 1 ns;
+        reset <= '1';
+        wait until rising_edge(clk);
+        wait for 1 ns;
+        reset <= '0';
 
         -- Test CSV vectors
         report "Testing CSV vectors...";
@@ -190,9 +190,9 @@ begin
         readline(csv_file, csv_line);  -- Skip header
         
         while not endfile(csv_file) loop
-			-- Read in the CSV line...
+            -- Read in the CSV line...
             readline(csv_file, csv_line);
-			-- ... and parse the values. Not great, not terrible to read it in.
+            -- ... and parse the values. Not great, not terrible to read it in.
             read(csv_line, cycle_num);
             read(csv_line, comma);
             read(csv_line, data_in);
@@ -205,8 +205,8 @@ begin
             read(csv_line, comma);
             read(csv_line, exp_out);
 
-			wait until falling_edge(clk);
-			wait for 1 ns;
+            wait until falling_edge(clk);
+            wait for 1 ns;
             
             -- Apply inputs
             color_data  <= std_logic_vector(to_unsigned(data_in, 8));
@@ -232,10 +232,10 @@ begin
                 errors := errors + 1;
             end if;
 
-			-- Calculate the DC balance to ensure the "DS" part of TMDS is working
-			-- Add the amount of ones and subtract the amount of zeros. The goal is, that
-			-- the DC balance stays around zero (+/- 8) after all tests.
-			dc_level := dc_level + count_ones(tmds_encoded) - (10 - count_ones(tmds_encoded));
+            -- Calculate the DC balance to ensure the "DS" part of TMDS is working
+            -- Add the amount of ones and subtract the amount of zeros. The goal is, that
+            -- the DC balance stays around zero (+/- 8) after all tests.
+            dc_level := dc_level + count_ones(tmds_encoded) - (10 - count_ones(tmds_encoded));
         end loop;
         file_close(csv_file);
 
@@ -249,12 +249,12 @@ begin
             report integer'image(errors) & " TESTS FAILED" severity error;
         end if;
 
-		-- Report DC balance level
-		if dc_level > 8 or dc_level < -8 then
-			report "DC balance level out of range: " & integer'image(dc_level) severity error;
-		else
-			report "DC balance level within acceptable range: " & integer'image(dc_level) severity note;
-		end if;
+        -- Report DC balance level
+        if dc_level > 8 or dc_level < -8 then
+            report "DC balance level out of range: " & integer'image(dc_level) severity error;
+        else
+            report "DC balance level within acceptable range: " & integer'image(dc_level) severity note;
+        end if;
         wait;
     end process test_proc;
 end architecture behavioral;
