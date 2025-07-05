@@ -14,13 +14,14 @@ In contrast to the other examples, this will have a more theoretical, educationa
    - [2.4 🟢🟢🟤🟤🟤🟤🟤🟤 Jump/Branch Instruction](#24-🟢🟥-jumpbranch-instruction)
    - [2.5 Undefined Instructions](#25-undefined-instructions)
 3. [CPU Architecture](#3-cpu-architecture)
-4. Fetch
-5. Decode
-6. Execute
-7. Write Back
-8. I/O Operations
-9. Example Program
-10. Conclusion
+4. [Fetch](#4-fetch)
+5. [Decode](#5-decode)
+6. [Execute](#6-execute)
+7. [Register File](#7-register-file)
+8. [Write Back](#8-write-back)
+9. [I/O Operations](#9-io-operations)
+10. [Example Program](#10-example-program)
+11. [Conclusion](#11-conclusion)
 
 ## [1. Introduction](#chapters)
 
@@ -80,10 +81,10 @@ The ALU/Compute instruction is used to perform arithmetic and logical operations
   - Addition of R1 and R2, result in R3 (No carry / overflow detection).
 - 🔴🟢🟤🟤🟤🟢🔴🟢 **SUB**
   - Subtraction of R2 from R1, result in R3 (No borrow / overflow detection).
-- 🔴🟢🟤🟤🟤🟢🟢🔴 **SHIFT**
-  - Shift R1 to the left (R2 > 0) or right (R2 < 0) by the value in R2, result in R3. If R2 is 0, R1 is copied to R3.
-- 🔴🟢🟤🟤🟤🟢🟢🟢 **XOR**
+- 🔴🟢🟤🟤🟤🟢🟢🔴 **XOR**
   - Bitwise XOR operation between R1 and R2, result in R3.
+- 🔴🟢🟤🟤🟤🟢🟢🟢 **SHIFT**
+  - Shift R1 to the left (R2 > 0) or right (R2 < 0) by the value in R2, result in R3. If R2 is 0, R1 is copied to R3.
 
 ### [2.3 🟢🔴🟤🟤🟤🟤🟤🟤 Copy Instruction](#2-the-instruction-set-architecture)
 
@@ -113,7 +114,7 @@ The following destination / sources are specified:
 
 The Jump/Branch instruction is used to control the flow of execution. It can be used to jump to a specific address or to branch to a different instruction based on a condition. The instruction does not specify the address to jump to, but instead uses the value in register zero (R0) as the address to jump to. Instead, it specifies the condition to branch on, which is determined by the value in register three (R3).
 
-The following conditions are specified:
+The following conditions are specified and a jump is performed if the condition is met:
 - 🟢🟢🟤🟤🟤🔴🔴🔴 **Never branches**
 - 🟢🟢🟤🟤🟤🔴🔴🟢 **R3 equals 0**
 - 🟢🟢🟤🟤🟤🔴🟢🔴 **R3 less than 0**
@@ -144,5 +145,118 @@ The CPU has the following inputs and outputs:
   - `io_addr`: The address of the I/O device, if any.
   - `io_out`: The output data to the I/O device, if any.
   - `io_write_enable`: The write enable signal for the I/O device, if any.
+  - `cpu_halted`: Indicates that the CPU has halted execution and is waiting for a reset.
 
 The CPU's memory is placed externally, allowing to easily change the program that is executed. The CPU will fetch the instruction from the instruction memory, decode it, execute it, and write back the result to the registers or the I/O device.
+
+The CPU architecture is split into five different components, which allows each intermediate step to be easily simulated and verified. The architecture consists of the following components:
+- **Instruction Fetch Unit (FE)** : Fetches the instruction from the instruction memory and provides it to the decode unit.
+- **Instruction Decode Unit (DE)** : Decodes the instruction and provides the necessary control signals to the execute unit.
+- **Execute Unit (EX)** : Executes the instruction and performs the necessary operations, such as ALU operations or jump condition checks.
+- **Write Back Unit (WB)** : Writes back the result of the instruction to the registers or the I/O device.
+- **Register File** : Stores the registers R0 to R6, which are used to hold data and addresses.
+
+In the following sections, we will implement each of these components in detail and explain how they work together to execute the instructions.
+
+## [4. Fetch](#chapters)
+
+The Fetch Unit is responsible for fetching the instruction from the instruction memory. It has an program counter (PC) that holds the address of the instruction to be fetched and executed. During normal operation, the PC is incremented by 1 after each instruction fetch, but it can also be set to a specific address if a successful jump/branch instruction is executed. The PC is reset to 0 when the CPU is reset, and when the CPU is halted, the PC is not incremented anymore.
+
+The Fetch Unit has the following inputs and outputs:
+- **Inputs:**
+  - `clk`: The clock signal, used to synchronize the Fetch Unit.
+  - `reset`: The active-high reset signal, used to reset the Fetch Unit.
+  - `perform_jump`: Signal to indicate to load `jump_addr` into the PC instead of incrementing it.
+  - `halt`: Signal to indicate that the CPU is halted and the PC should not be incremented anymore.
+  - `jump_addr`: The address to jump to, if a jump/branch instruction is executed.
+  - `memory_data`: The data read from the instruction memory, which is the instruction to be executed.
+- **Outputs:**
+  - `memory_addr`: The address of the instruction to be fetched, used to fetch the instruction from the instruction memory.
+  - `fetched_instruction`: The instruction to be executed, fetched from the instruction memory.
+
+Given the simplicity of the Fetch Unit, simply a 8-bit counter needs to be implemented, which either increments by 1, is set to a specific address or is held at the current address if the CPU is halted. The counter is reset to 0 when the CPU is reset. No special handling is added in case of an roll-over of the program counter.
+
+```vhdl
+...
+--! Process to handle the program counter
+PROGRAM_COUNTER : process(clk, reset) begin
+    if rising_edge(clk) then
+        if reset = '1' then
+            -- Reset the program counter to 0 on reset
+            program_counter_reg <= (others => '0');
+        else
+            if halt = '1' then
+                -- Do not increment the program counter if the CPU is halted
+                program_counter_reg <= program_counter_reg;
+            else
+                -- Increment the program counter or set it to the jump address
+                if perform_jump = '1' then
+                    program_counter_reg <= unsigned(jump_addr);
+                else
+                    program_counter_reg <= program_counter_reg + 1;
+                end if;
+            end if;
+        end if;
+    end if;
+end process PROGRAM_COUNTER;
+...
+```
+
+See TODOFILE to see the full implementation of the Fetch Unit, alongside with the TODOTESTBENCH to verify its functionality.
+
+## [5. Decode](#chapters)
+
+> **WIP**: This section is a work in progress and will be completed in the future.
+
+The Decode Unit is responsible for decoding the fetched instruction and generating the necessary control signals for the Execute Unit. It takes the fetched instruction as input and outputs the control signals, which are used to control the execution of the instruction.
+
+The Decode Unit has the following inputs and outputs:
+- **Inputs:**
+  - `fetched_instruction`: The instruction to be decoded, fetched from the Fetch Unit.
+- **Outputs:**
+  - `alu_op`: The ALU operation to be performed, based on the instruction.
+  - `src_reg`: The source register for the copy instruction.
+  - `dest_reg`: The destination register for the copy instruction.
+  - `jump_condition`: The condition for the jump/branch instruction.
+  - `immediate_value`: The immediate value for the load immediate instruction.
+
+The implementation is straightforward, as we simply extract the relevant bits from the fetched instruction. Based on the instruction type, we set the control signals accordingly.
+
+```vhdl
+...
+alu_op          <= fetched_instruction(2 downto 0); -- ALU operation bits
+src_reg         <= fetched_instruction(5 downto 3); -- Source register bits
+dest_reg        <= fetched_instruction(2 downto 0); -- Destination register bits
+jump_condition  <= fetched_instruction(2 downto 0); -- Jump condition bits
+immediate_value <= fetched_instruction(5 downto 0); -- Immediate value bits
+...
+```
+
+See TODOFILE to see the full implementation of the Decode Unit, alongside with the TODOTESTBENCH to verify its functionality.
+
+## [6. Execute](#chapters)
+
+> **WIP**: This section is a work in progress and will be completed in the future.
+
+The Execute Unit is responsible for executing the decoded instruction. It takes the control signals from the Decode Unit and performs the necessary operations, such as ALU operations or jump condition checks. The Execute Unit also interacts with the Register File to read and write data.
+
+## [7. Register File](#chapters)
+
+> **WIP**: This section is a work in progress and will be completed in the future.
+
+## [8. Write Back](#chapters)
+
+> **WIP**: This section is a work in progress and will be completed in the future.
+
+## [9. I/O Operations](#chapters)
+
+> **WIP**: This section is a work in progress and will be completed in the future.
+
+## [10. Example Program](#chapters)
+
+> **WIP**: This section is a work in progress and will be completed in the future.
+
+## [11. Conclusion](#chapters)
+
+> **WIP**: This section is a work in progress and will be completed in the future.
+
