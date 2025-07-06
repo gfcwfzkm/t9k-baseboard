@@ -238,11 +238,59 @@ See TODOFILE to see the full implementation of the Decode Unit, alongside with t
 
 > **WIP**: This section is a work in progress and will be completed in the future.
 
-The Execute Unit is responsible for executing the decoded instruction. It takes the control signals from the Decode Unit and performs the necessary operations, such as ALU operations or jump condition checks. The Execute Unit also interacts with the Register File to read and write data.
+The Execute Unit is responsible for executing the decoded instruction. It takes the control signals from the Decode Unit and performs the necessary operations, such as ALU operations or jump condition checks. Since the ALU operations take the registers R1 and R2 as input operands, the Execute Unit also needs access to the Register File to read the values of these registers. The jump condition checks are also performed in the Execute Unit, using the value of register R3 to determine whether to jump or branch.
 
 ## [7. Register File](#chapters)
 
 > **WIP**: This section is a work in progress and will be completed in the future.
+
+The Register File is responsible for storing the registers R0 to R6. It provides read and write access to the registers, with direct access to the registers R1 to R3 for the Execute Unit. The Register File also provides access to the I/O device address register R6, which is used to read from and write to the I/O device. Finally, direct access to the register R0 is provided to the Fetch Unit, to load in a new address if a valid jump/branch condition has been met. The values of these registers are updated by the Write Back Unit, at the end of the instruction execution.
+
+So at the end, the Register File simply consists of a 7-element array of 8-bit registers, which can be read and written to. The Register File has the following inputs and outputs:
+
+- **Inputs:**
+  - `clk`: The clock signal, used to synchronize the Register File.
+  - `reset`: The active-high reset signal, used to reset the Register File.
+  - `write_enable`: The write enable signal, used to enable writing to the registers.
+  - `write_data`: The data to be written to the registers.
+  - `write_reg`: The register to write to (R0 to R6).
+  - `read_reg`: The register to read from (R0 to R6), used by the Copy instruction.
+- **Outputs:**
+  - `read_data`: The data read from the registers.
+  - `register0`: The value of register R0, used to load immediate values and as jump/branch destination.
+  - `register1`: The value of register R1, used as the first operand for ALU operations.
+  - `register2`: The value of register R2, used as the second operand for ALU operations.
+  - `register3`: The value of register R3, used to check the jump/branch condition.
+
+```vhdl
+...
+--! Process to handle the register file
+REGISTER_FILE : process(clk, reset) begin
+	if rising_edge(clk) then
+		if reset = '1' then
+			-- Reset all registers to 0 on reset
+			for i in 0 to 6 loop
+				registers(i) <= (others => '0');
+			end loop;
+		else
+			if write_enable = '1' then
+				-- Write data to the specified register
+				registers(to_integer(unsigned(write_reg))) <= write_data;
+			end if;
+		end if;
+	end if;
+end process REGISTER_FILE;
+
+--! Read data from the specified register
+read_data <= registers(to_integer(unsigned(read_reg)));
+
+--! Provide direct access to the registers R0 to R3
+register0 <= registers(0);
+register1 <= registers(1);
+register2 <= registers(2);
+register3 <= registers(3);
+...
+```
 
 ## [8. Write Back](#chapters)
 

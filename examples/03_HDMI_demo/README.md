@@ -40,7 +40,7 @@ The code is documented and there are tests for the TMDS encoder. Otherwise write
 │   ├── vtgen.vhdl                      Video timing generator
 │   ├── gowin_clkdiv/                   Gowin-generated IP clock divider
 │   └── gowin_rpll/                     Gowin-generated IP PLL
-└── tests/                          Testbench and tmds python script
+└── testbench/                      Testbench and tmds python script
     ├── stimuli.csv                     Stimuli for the TMDS encoder testbench
     ├── tb_tmds_encoder.vhdl            Testbench for the TMDS encoder
     ├── tb_tmds_encoder.fst             Testbench waveform output
