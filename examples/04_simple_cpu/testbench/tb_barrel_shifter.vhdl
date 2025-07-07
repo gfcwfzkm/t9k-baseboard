@@ -69,18 +69,17 @@ begin
         )
         port map (
             input_vector => input_vector,
-                shift_amount => shift_amount,
+            shift_amount => shift_amount,
             output_vector => output_vector
     );
 
 	--! Stimulus process to apply test vectors
     stimulus : process
         variable error_count : natural := 0;
-        variable ignored_errors : natural := 0;
-        variable seed1, seed2 : positive := 1;
+        variable seed1, seed2 : positive := 42;
         variable rand_real : real;
         variable rand_int : integer;
-        variable expected : std_logic_vector(WIDTH-1 downto 0);
+		variable rand_input_vector : std_logic_vector(WIDTH-1 downto 0);
         
 		--! Procedure to run a test case and check the output
         procedure run_test(
@@ -134,12 +133,12 @@ begin
 
         -- Ignore the errors of the following four tests as they are expected to fail
         -- Full width shifts
-        --run_test("10101010", WIDTH, ignored_errors);
-        --run_test("10101010", -WIDTH, ignored_errors);
+        --run_test("10101010", WIDTH, error_count);
+        --run_test("10101010", -WIDTH, error_count);
         
         -- More than full width
-        --run_test("11001100", WIDTH + 1, ignored_errors);
-        --run_test("11001100", -(WIDTH + 1), ignored_errors);
+        --run_test("11001100", WIDTH + 1, error_count);
+        --run_test("11001100", -(WIDTH + 1), error_count);
         
         -- If we can't even pass the edge case tests, we don't even want to run the random tests
         if error_count > 0 then
@@ -153,29 +152,18 @@ begin
             for j in 0 to WIDTH-1 loop
                 uniform(seed1, seed2, rand_real);
                 if rand_real > 0.5 then
-                    input_vector(j) <= '1';
+                    rand_input_vector(j) := '1';
                 else
-                    input_vector(j) <= '0';
+                    rand_input_vector(j) := '0';
                 end if;
             end loop;
             
-            -- Generate random shift amount (-2*WIDTH to 2*WIDTH)
+            -- Generate random shift amount (-(WIDTH-1) to (WIDTH-1))
             uniform(seed1, seed2, rand_real);
-            rand_int := integer(floor(rand_real * real(2 * (WIDTH-1)))) - (WIDTH-1);            
-            shift_amount <= to_signed(rand_int, SHIFT_BITS);
+            rand_int := integer(floor(rand_real * real(2 * (WIDTH-1)))) - (WIDTH-1);
             
-            wait for 10 ns;
-            
-            -- Check result
-            expected := expected_shift(input_vector, rand_int);
-            if output_vector /= expected then
-                report "Error: Input=" & to_string(input_vector) & 
-                       " Shift=" & integer'image(rand_int) & 
-                       " Expected=" & to_string(expected) & 
-                       " Got=" & to_string(output_vector)
-                severity error;
-                error_count := error_count + 1;
-            end if;
+			-- Apply the input vector and check the output
+			run_test(rand_input_vector, rand_int, error_count);
         end loop;
         
         -- Final report
