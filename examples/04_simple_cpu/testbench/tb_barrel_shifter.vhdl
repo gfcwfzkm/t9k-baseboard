@@ -1,4 +1,17 @@
 -- Dependency: src/barrel_shifter.vhdl
+-- TEROSHDL Documentation:
+--! @title Barrel Shifter Testbench
+--! @author Pascal G. (gfcwfzkm)
+--! @version 1.0
+--! @date 07.07.2025
+--! @brief Testbench for the barrel shifter
+--!
+--! This testbench verifies the functionality of a barrel shifter.
+--! It goes through edge cases and special patterns, and then runs a number of random tests.
+--! 
+--! The amount of random tests can be configured by changing the `NUM_RANDOM_TESTS` constant.
+--! 
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -9,14 +22,21 @@ entity tb_barrel_shifter is
 end tb_barrel_shifter;
 
 architecture testbench of tb_barrel_shifter is
+	--! Bit-Width of the barrel shifter
     constant WIDTH : positive := 8;
+	--! Number of bits needed to represent the shift amount
     constant SHIFT_BITS : positive := integer(ceil(log2(real(WIDTH)))) + 1;
+	--! Number of random tests to run
     constant NUM_RANDOM_TESTS : positive := 500;
 
+	--! Input vector going into the barrel shifter
     signal input_vector : std_logic_vector(WIDTH-1 downto 0);
+	--! Shift amount (signed, two's complement) to shift the input vector
     signal shift_amount : signed(SHIFT_BITS-1 downto 0);
+	--! Output vector from the barrel shifter
     signal output_vector : std_logic_vector(WIDTH-1 downto 0);
 
+	--! Function to calculate the expected output of the barrel shifter
     function expected_shift (
         input_vec : std_logic_vector;
         shift : integer
@@ -42,7 +62,7 @@ architecture testbench of tb_barrel_shifter is
     end function;
 
 begin
-    -- Instantiate the barrel shifter DUT
+    --! Instantiate the barrel shifter DUT
     DUT : entity work.barrel_shifter
         generic map (
             WIDTH => WIDTH
@@ -53,6 +73,7 @@ begin
             output_vector => output_vector
     );
 
+	--! Stimulus process to apply test vectors
     stimulus : process
         variable error_count : natural := 0;
         variable ignored_errors : natural := 0;
@@ -61,6 +82,7 @@ begin
         variable rand_int : integer;
         variable expected : std_logic_vector(WIDTH-1 downto 0);
         
+		--! Procedure to run a test case and check the output
         procedure run_test(
             input_val : std_logic_vector;
             shift_val : integer;
@@ -110,7 +132,7 @@ begin
         run_test("11111111", WIDTH - 1, error_count);
         run_test("11111111", -(WIDTH - 1), error_count);
 
-        -- Ignore the errors of the following four tests
+        -- Ignore the errors of the following four tests as they are expected to fail
         -- Full width shifts
         --run_test("10101010", WIDTH, ignored_errors);
         --run_test("10101010", -WIDTH, ignored_errors);
