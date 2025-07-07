@@ -46,18 +46,16 @@ architecture testbench of tb_barrel_shifter is
         variable input_vector : std_logic_vector(len-1 downto 0) := input_vec;
         variable abs_shift : natural;
     begin
-        abs_shift := abs(shift);
+        abs_shift := abs(shift) mod len;
         
         temp := (others => '0');  -- Default to zero vector
-        if abs_shift >= len then
-            temp := (others => '0');
-        else
-            if shift >= 0 then  -- Left shift
-                temp := input_vector(len-1-abs_shift downto 0) & (abs_shift-1 downto 0 => '0');
-            else   -- Right shift
-                temp := (abs_shift-1 downto 0 => '0') & input_vector(len-1 downto abs_shift);
-            end if;
+        
+		if shift >= 0 then  -- Left shift
+            temp := input_vector(len-1-abs_shift downto 0) & (abs_shift-1 downto 0 => '0');
+        else   -- Right shift
+            temp := (abs_shift-1 downto 0 => '0') & input_vector(len-1 downto abs_shift);
         end if;
+
         return temp;
     end function;
 
@@ -88,12 +86,15 @@ begin
             variable err_cnt : inout natural
         ) is
             variable exp_vec : std_logic_vector(WIDTH-1 downto 0);
+			variable sh_amount : signed(7 downto 0);
         begin
-            shift_amount <= to_signed(shift_val, SHIFT_BITS);
+            sh_amount := to_signed(shift_val, sh_amount'length);
+
+            shift_amount <= sh_amount(SHIFT_BITS-1 downto 0);
             input_vector <= input_val;
             wait for 5 ns;
             
-            exp_vec := expected_shift(input_val, shift_val);
+            exp_vec := expected_shift(input_val, to_integer(shift_amount));
             
             if output_vector /= exp_vec then
                 report "Error: Input=" & to_string(input_val) & 
@@ -133,12 +134,12 @@ begin
 
         -- Ignore the errors of the following four tests as they are expected to fail
         -- Full width shifts
-        --run_test("10101010", WIDTH, error_count);
-        --run_test("10101010", -WIDTH, error_count);
+        run_test("10101010", WIDTH, error_count);
+        run_test("10101010", -WIDTH, error_count);
         
         -- More than full width
-        --run_test("11001100", WIDTH + 1, error_count);
-        --run_test("11001100", -(WIDTH + 1), error_count);
+        run_test("11001100", WIDTH + 1, error_count);
+        run_test("11001100", -(WIDTH + 1), error_count);
         
         -- If we can't even pass the edge case tests, we don't even want to run the random tests
         if error_count > 0 then
