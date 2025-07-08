@@ -20,6 +20,7 @@ entity tb_decode is
 end tb_decode;
 
 architecture sim of tb_decode is
+
     signal fetched_instruction : std_logic_vector(7 downto 0);
     signal instruction_type    : std_logic_vector(1 downto 0);
     signal alu_op              : std_logic_vector(2 downto 0);
@@ -100,17 +101,19 @@ architecture sim of tb_decode is
 
         return (inst, v_type, v_alu_op, v_jump, v_src, v_dst, v_imm, v_halt);
     end function;
+
 begin
-    uut: entity work.decode
+
+    DUT: entity work.decode
         port map (
-            fetched_instruction => fetched_instruction,
-            instruction_type => instruction_type,
-            alu_op => alu_op,
-            jump_condition => jump_condition,
-            src_reg => src_reg,
-            dst_reg => dst_reg,
-            immediate_value => immediate_value,
-            halt => halt
+            fetched_instruction_i => fetched_instruction,
+            instruction_type_o => instruction_type,
+            alu_op_o => alu_op,
+            jump_condition_o => jump_condition,
+            src_reg_o => src_reg,
+            dst_reg_o => dst_reg,
+            immediate_value_o => immediate_value,
+            halt_o => halt
         );
 
     test_runner: process
@@ -239,4 +242,5 @@ begin
         end if;
         wait;
     end process;
+	
 end architecture;

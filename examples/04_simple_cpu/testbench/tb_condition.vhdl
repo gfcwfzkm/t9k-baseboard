@@ -21,6 +21,7 @@ entity tb_condition is
 end entity tb_condition;
 
 architecture behavior of tb_condition is
+
     --! Test record and array type
     type test_record is record
         op      : std_logic_vector(2 downto 0);
@@ -138,20 +139,22 @@ architecture behavior of tb_condition is
     signal operand      : signed(7 downto 0);
     signal result_rtl   : std_logic;
     signal result_tc    : std_logic;
+
 begin
+
     -- Unit Under Test (rtl architecture)
-    uut_rtl: entity work.condition(rtl)
+    DUT_RTL: entity work.condition(rtl)
         port map (
-            condition_op => op,
-            operand => operand,
-            result => result_rtl
+            condition_op_i => op,
+            operand_i => operand,
+            result_o => result_rtl
         );
     -- Unit Under Test (turing_complete architecture)
-    uut_tc: entity work.condition(turing_complete)
+    DUT_TC: entity work.condition(turing_complete)
         port map (
-            condition_op => op,
-            operand => operand,
-            result => result_tc
+            condition_op_i => op,
+            operand_i => operand,
+            result_o => result_tc
         );
     
     -- Test process
@@ -283,4 +286,5 @@ begin
         -- Stop the simulation
         wait;
     end process;
+	
 end architecture behavior;

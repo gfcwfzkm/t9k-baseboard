@@ -26,12 +26,12 @@ entity barrel_shifter is
     );
     port (
         --! Input vector to be shifted
-        input_vector    : in std_logic_vector(WIDTH - 1 downto 0);
+        input_vector_i  : in std_logic_vector(WIDTH - 1 downto 0);
         --! Shift amount, can be positive (left shift) or negative (right shift)
-        shift_amount    : in signed(integer(ceil(log2(real(WIDTH)))) downto 0);
+        shift_amount_i  : in signed(integer(ceil(log2(real(WIDTH)))) downto 0);
         
         --! Output vector after shifting
-        output_vector   : out std_logic_vector(WIDTH - 1 downto 0)
+        output_vector_o : out std_logic_vector(WIDTH - 1 downto 0)
     );
 end entity barrel_shifter;
 
@@ -61,17 +61,17 @@ architecture rtl of barrel_shifter is
 begin
 
     -- Determine the shift direction and absolute shift amount
-    shift_direction_left <= not shift_amount(shift_amount'length - 1);
-    shift_amount_abs <= unsigned(abs(shift_amount));
+    shift_direction_left <= not shift_amount_i(shift_amount_i'length - 1);
+    shift_amount_abs <= unsigned(abs(shift_amount_i));
 
     -- Reverse the input vector, needed for left shifts
     REVERSE_INPUT : for i in 0 to WIDTH-1 generate
-        input_vector_reversed(WIDTH - 1 - i) <= input_vector(i);
+        input_vector_reversed(WIDTH - 1 - i) <= input_vector_i(i);
     end generate;
 
     -- Initialize the intermediate vector
     intermediate_vector(0) <= input_vector_reversed when shift_direction_left = '1' else
-                              input_vector;
+                              input_vector_i;
 
     -- Perform the shifts
     BARREL_SHIFT : for i in MAX_SHIFT-1 downto 0 generate
@@ -92,7 +92,7 @@ begin
     end generate;
 
     -- Assign the final output vector
-    output_vector <= output_vector_reversed when shift_direction_left = '1' else
+    output_vector_o <= output_vector_reversed when shift_direction_left = '1' else
                      intermediate_vector(MAX_SHIFT);
 
 end architecture;

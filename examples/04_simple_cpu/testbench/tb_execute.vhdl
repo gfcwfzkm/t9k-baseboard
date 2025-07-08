@@ -42,7 +42,7 @@ architecture tb of tb_execute is
     signal condition_result : std_logic;
     
     -- Test control
-    constant RANDOM_TESTS  : integer := 10000;
+    constant RANDOM_TESTS  : integer := 50000;
 
     --! Function to calculate the expected output of the barrel shifter
     function expected_shift (
@@ -113,7 +113,7 @@ architecture tb of tb_execute is
 begin
 
     -- Instantiate DUT
-    uut: entity work.execute(rtl)
+    DUT: entity work.execute(rtl)
     port map (
         instruction_type => instruction_type,
         alu_op => alu_op,

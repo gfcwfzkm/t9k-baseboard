@@ -36,11 +36,11 @@ use ieee.numeric_std.all;
 entity condition is
     port (
         --! Condition operation code to select the condition to check
-        condition_op    : in std_logic_vector(2 downto 0);
+        condition_op_i  : in std_logic_vector(2 downto 0);
         --! Operand (signed, two's complement) to check the condition against
-        operand         : in signed(7 downto 0);
+        operand_i       : in signed(7 downto 0);
         --! Result signal that is set to '1' if the condition is met, otherwise '0'
-        result          : out std_logic
+        result_o        : out std_logic
     );
 end entity;
 
@@ -48,58 +48,58 @@ architecture rtl of condition is
 begin
 
     --! Process to check the condition based on the condition_op and operand
-    CONDITION_CHECK : process (condition_op, operand) begin
-        case condition_op is
+    CONDITION_CHECK : process (condition_op_i, operand_i) begin
+        case condition_op_i is
             when "000" =>
                 -- Never branch
-                result <= '0';
+                result_o <= '0';
             when "001" =>
                 -- Operand is zero
-                if operand = 0 then
-                    result <= '1';
+                if operand_i = 0 then
+                    result_o <= '1';
                 else
-                    result <= '0';
+                    result_o <= '0';
                 end if;
             when "010" =>
                 -- Operand is less than zero
-                if operand < 0 then
-                    result <= '1';
+                if operand_i < 0 then
+                    result_o <= '1';
                 else
-                    result <= '0';
+                    result_o <= '0';
                 end if;
             when "011" =>
                 -- Operand is less than or equal to zero
-                if operand <= 0 then
-                    result <= '1';
+                if operand_i <= 0 then
+                    result_o <= '1';
                 else
-                    result <= '0';
+                    result_o <= '0';
                 end if;
             when "100" =>
                 -- Always branch
-                result <= '1';
+                result_o <= '1';
             when "101" =>
                 -- Operand is not zero
-                if operand /= 0 then
-                    result <= '1';
+                if operand_i /= 0 then
+                    result_o <= '1';
                 else
-                    result <= '0';
+                    result_o <= '0';
                 end if;
             when "110" =>
                 -- Operand is greater than or equal to zero
-                if operand >= 0 then
-                    result <= '1';
+                if operand_i >= 0 then
+                    result_o <= '1';
                 else
-                    result <= '0';
+                    result_o <= '0';
                 end if;
             when "111" =>
                 -- Operand is greater than zero
-                if operand > 0 then
-                    result <= '1';
+                if operand_i > 0 then
+                    result_o <= '1';
                 else
-                    result <= '0';
+                    result_o <= '0';
                 end if;
             when others =>
-                result <= '0';
+                result_o <= '0';
         end case;
     end process CONDITION_CHECK;
 
@@ -128,8 +128,8 @@ architecture turing_complete of condition is
 begin
 
     -- First get the intermediate signals
-    is_result_negative <= operand(7);
-    is_result_non_zero <= or operand(6 downto 0);	-- VHDL-2008 feature!
+    is_result_negative <= operand_i(7);
+    is_result_non_zero <= or operand_i(6 downto 0);	-- VHDL-2008 feature!
     -- If the above does not work, then you're probably on VHDL-1993 (poor Intel Quartus users),
     -- comment out the problematic line and uncomment the one below:
     -- is_result_non_zero <= '0' when unsigned(operand(6 downto 0)) = 0 else '1';
@@ -146,8 +146,8 @@ begin
 
     -- Finally, assign the result based on the condition_op
     -- Basically one big multiplexer to select the result based on the condition_op
-    with condition_op select
-        result  <= 	cond_never_branch       when "000",
+    with condition_op_i select
+        result_o  <= 	cond_never_branch       when "000",
                     cond_equal_zero         when "001",
                     cond_less_than_zero     when "010",
                     cond_less_equal_zero    when "011",

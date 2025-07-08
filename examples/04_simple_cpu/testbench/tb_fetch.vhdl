@@ -22,16 +22,16 @@ architecture tb of tb_fetch is
 
 begin
     -- Instantiate DUT
-    dut : entity work.fetch
+    DUT : entity work.fetch
         port map (
-            clk                 => clk,
-            reset               => reset,
-            perform_jump        => perform_jump,
-            jump_address        => jump_address,
-            halt                => halt,
-            memory_data         => memory_data,
-            memory_address      => memory_address,
-            fetched_instruction => fetched_instruction
+            clk_i                 => clk,
+            reset_i               => reset,
+            perform_jump_i        => perform_jump,
+            jump_address_i        => jump_address,
+            halt_i                => halt,
+            memory_data_i         => memory_data,
+            memory_address_o      => memory_address,
+            fetched_instruction_o => fetched_instruction
         );
 
     -- Clock generation

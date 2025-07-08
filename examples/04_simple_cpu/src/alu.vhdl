@@ -30,15 +30,15 @@ use ieee.numeric_std.all;
 entity alu is
     port (
         --! ALU operation control signal
-        alu_op      : in std_logic_vector(2 downto 0);
+        alu_op_i    : in std_logic_vector(2 downto 0);
 
         --! Operand A to perform the ALU operation on
-        operand_a   : in std_logic_vector(7 downto 0);
+        operand_a_i : in std_logic_vector(7 downto 0);
         --! Operand B to perform the ALU operation on
-        operand_b   : in std_logic_vector(7 downto 0);
+        operand_b_i : in std_logic_vector(7 downto 0);
 
         --! Result of the ALU operation
-        result      : out std_logic_vector(7 downto 0)
+        result_o    : out std_logic_vector(7 downto 0)
     );
 end entity alu;
 
@@ -46,26 +46,26 @@ architecture rtl of alu is
 begin
 
     --! Perform the ALU operation based on the alu_op control signal.
-    ALU_OPERATION : process (alu_op, operand_a, operand_b)
+    ALU_OPERATION : process (alu_op_i, operand_a_i, operand_b_i)
     begin
 
-        case alu_op is
+        case alu_op_i is
             when "000" =>  -- OR operation: R3 = R1 | R2
-                result <= operand_a or operand_b;
+                result_o <= operand_a_i or operand_b_i;
             when "001" =>  -- NAND operation: R3 = ~(R1 & R2)
-                result <= operand_a nand operand_b;
+                result_o <= operand_a_i nand operand_b_i;
             when "010" =>  -- NOR operation: R3 = ~(R1 | R2)
-                result <= operand_a nor operand_b;
+                result_o <= operand_a_i nor operand_b_i;
             when "011" =>  -- AND operation: R3 = R1 & R2
-                result <= operand_a and operand_b;
+                result_o <= operand_a_i and operand_b_i;
             when "100" =>  -- ADD operation: R3 = R1 + R2
-                result <= std_logic_vector(unsigned(operand_a) + unsigned(operand_b));
+                result_o <= std_logic_vector(unsigned(operand_a_i) + unsigned(operand_b_i));
             when "101" =>  -- SUB operation: R3 = R1 - R2
-                result <= std_logic_vector(unsigned(operand_a) - unsigned(operand_b));
+                result_o <= std_logic_vector(unsigned(operand_a_i) - unsigned(operand_b_i));
             when "110" =>  -- XOR operation: R3 = R1 ^ R2
-                result <= operand_a xor operand_b;
+                result_o <= operand_a_i xor operand_b_i;
             when others =>  -- Default case: R3 = 0
-                result <= (others => '0');
+                result_o <= (others => '0');
         end case;
 
     end process ALU_OPERATION;
@@ -79,14 +79,14 @@ begin
     -- in a process body is more readable and maintainable. Still, the example
     -- below lets you see how to use a with-select statement.
 
-    with alu_op select 
-        result  <=	operand_a or operand_b                                      when "000",  -- OR operation: R3 = R1 | R2
-                     operand_a nand operand_b                                   when "001",  -- NAND operation: R3 = ~(R1 & R2)
-                    operand_a nor operand_b                                     when "010",  -- NOR operation: R3 = ~(R1 | R2)
-                    operand_a and operand_b                                     when "011",  -- AND operation: R3 = R1 & R2
-                    std_logic_vector(unsigned(operand_a) + unsigned(operand_b)) when "100",  -- ADD operation: R3 = R1 + R2
-                    std_logic_vector(unsigned(operand_a) - unsigned(operand_b)) when "101",  -- SUB operation: R3 = R1 - R2
-                    operand_a xor operand_b                                     when "110",  -- XOR operation: R3 = R1 ^ R2
-                      "00000000" when others;                                                -- Default case: R3 = 0
+    with alu_op_i select 
+        result_o <= operand_a_i or operand_b_i                                      when "000",  -- OR operation: R3 = R1 | R2
+                    operand_a_i nand operand_b_i                                    when "001",  -- NAND operation: R3 = ~(R1 & R2)
+                    operand_a_i nor operand_b_i                                     when "010",  -- NOR operation: R3 = ~(R1 | R2)
+                    operand_a_i and operand_b_i                                     when "011",  -- AND operation: R3 = R1 & R2
+                    std_logic_vector(unsigned(operand_a_i) + unsigned(operand_b_i)) when "100",  -- ADD operation: R3 = R1 + R2
+                    std_logic_vector(unsigned(operand_a_i) - unsigned(operand_b_i)) when "101",  -- SUB operation: R3 = R1 - R2
+                    operand_a_i xor operand_b_i                                     when "110",  -- XOR operation: R3 = R1 ^ R2
+                    "00000000" when others;                                                      -- Default case: R3 = 0
 
 end architecture;

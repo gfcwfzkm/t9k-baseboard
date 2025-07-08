@@ -19,6 +19,7 @@ entity tb_alu is
 end entity tb_alu;
 
 architecture tb of tb_alu is
+
     --! Number of random tests per ALU operation
     constant NUM_RANDOM_TESTS : natural := 100;
     
@@ -99,14 +100,16 @@ architecture tb of tb_alu is
             when others => return "00000000";
         end case;
     end function;
+
 begin
+
     -- Unit Under Test
-    uut: entity work.alu(rtl)
+    DUT: entity work.alu(rtl)
         port map (
-            alu_op    => alu_op,
-            operand_a => operand_a,
-            operand_b => operand_b,
-            result    => result
+            alu_op_i    => alu_op,
+            operand_a_i => operand_a,
+            operand_b_i => operand_b,
+            result_o    => result
         );
     
     -- Test process
@@ -114,9 +117,6 @@ begin
         variable seed1, seed2 : positive := 1;
         variable rand_real    : real;
         variable error_count  : natural := 0;
-        variable base_val    : std_logic_vector(7 downto 0);
-        variable shift_amt   : natural;
-        variable shift_dir   : std_logic;
         variable rand_a       : std_logic_vector(7 downto 0);
         variable rand_b       : std_logic_vector(7 downto 0);
     begin
@@ -192,4 +192,5 @@ begin
         
         wait;
     end process;
+	
 end architecture tb;

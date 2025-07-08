@@ -22,6 +22,7 @@ entity tb_barrel_shifter is
 end tb_barrel_shifter;
 
 architecture testbench of tb_barrel_shifter is
+
 	--! Bit-Width of the barrel shifter
     constant WIDTH : positive := 8;
 	--! Number of bits needed to represent the shift amount
@@ -60,15 +61,16 @@ architecture testbench of tb_barrel_shifter is
     end function;
 
 begin
+
     --! Instantiate the barrel shifter DUT
     DUT : entity work.barrel_shifter
         generic map (
             WIDTH => WIDTH
         )
         port map (
-            input_vector => input_vector,
-            shift_amount => shift_amount,
-            output_vector => output_vector
+            input_vector_i => input_vector,
+            shift_amount_i => shift_amount,
+            output_vector_o => output_vector
     );
 
 	--! Stimulus process to apply test vectors
@@ -171,4 +173,5 @@ begin
         report "TEST COMPLETE. Errors: " & integer'image(error_count);
         wait;
     end process;
+	
 end testbench;
