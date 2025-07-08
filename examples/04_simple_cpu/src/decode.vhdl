@@ -42,6 +42,7 @@ begin
     -- Decode the respective fields from the fetched instruction
     instruction_type_o <= fetched_instruction_i(7 downto 6); -- Instruction type bits
 
+	--! Decode process for the fetched instruction
     process (instruction_type_o, fetched_instruction_i) is
     begin
         src_reg_o         <= "000"; -- Source register bits

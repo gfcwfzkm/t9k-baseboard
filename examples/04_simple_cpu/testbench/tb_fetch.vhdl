@@ -1,3 +1,16 @@
+-- Dependency: src/fetch.vhdl
+-- TEROSHDL Documentation:
+--! @title Fetch Unit Testbench
+--! @author Pascal G. (gfcwfzkm)
+--! @version 1.0
+--! @date 07.07.2025
+--! @brief Testbench for the fetch unit of a simple CPU
+--!
+--! This VHDL code implements a testbench for the fetch unit of a simple CPU.
+--! It tests the functionality of the fetch unit, including instruction fetching, program counter management,
+--! jump handling, and halt functionality.
+--!
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -21,7 +34,7 @@ architecture tb of tb_fetch is
     signal fetched_instruction  : std_logic_vector(7 downto 0);
 
 begin
-    -- Instantiate DUT
+    --! Instantiate DUT
     DUT : entity work.fetch
         port map (
             clk_i                 => clk,
@@ -37,7 +50,7 @@ begin
     -- Clock generation
     clk <= not clk after CLK_PERIOD / 2 when not tb_finished else '0';
 
-    -- Test process
+    --! Test process
     test_proc : process
         -- Helper procedure to check outputs
         procedure check_outputs(

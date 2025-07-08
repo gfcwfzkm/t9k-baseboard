@@ -1,3 +1,23 @@
+-- Dependency: src/alu.vhdl src/barrel_shifter.vhdl src/condition.vhdl src/execute.vhdl src/decode.vhdl src/fetch.vhdl src/registers.vhdl src/write_back.vhdl src/overture.vhdl
+-- TEROSHDL Documentation:
+--! @title Testbench for Overture CPU
+--! @author Pascal G. (gfcwfzkm)
+--! @version 1.0
+--! @date 08.07.2025
+--! @brief Testbench for the Overture CPU, testing various instructions and I/O operations
+--!
+--! This VHDL code implements a testbench for the Overture CPU, which is a simple CPU architecture.
+--! It tests the functionality of the CPU, including instruction fetching, ALU operations, I/O operations,
+--! and conditional jumps. The testbench includes multiple test cases, each designed to verify specific
+--! aspects of the CPU's functionality. 
+--!
+--! Currently, the testbench includes four tests:
+--! 1. Load Immediate and Copy: Loads a value into a register and copies it to an I/O address.
+--! 2. ALU ADD: Performs an addition operation and outputs the result to an I/O address.
+--! 3. Conditional Jump: Tests a conditional jump instruction based on the value in a register.
+--! 4. Fibonacci Sequence: Outputs the first 8 values of the Fibonacci sequence to an I/O address.
+--!
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -8,6 +28,7 @@ entity tb_overture is
 end entity tb_overture;
 
 architecture behavior of tb_overture is
+
     -- Component Declaration for the Unit Under Test (UUT)
     component overture
         port (
@@ -130,6 +151,7 @@ architecture behavior of tb_overture is
 	signal tb_finished : boolean := false;
     
 begin
+
     -- Instantiate the Overture CPU
     DUT: overture port map (
         clk_i                  => clk_i,
@@ -284,4 +306,5 @@ begin
 		tb_finished <= true;
         wait;
     end process;
+	
 end architecture;

@@ -7,13 +7,13 @@
 --!
 --! This VHDL code implements a simple ALU for a CPU.
 --! It supports seven basic arithmetic and logical operations. The following operations are supported:
---! - OR: R3 = R1 | R2
---! - NAND: R3 = ~(R1 & R2)
---! - NOR: R3 = ~(R1 | R2)
---! - AND: R3 = R1 & R2
---! - ADD: R3 = R1 + R2
---! - SUB: R3 = R1 - R2
---! - XOR: R3 = R1 ^ R2
+--! 0. OR: R3 = R1 | R2
+--! 1. NAND: R3 = ~(R1 & R2)
+--! 2. NOR: R3 = ~(R1 | R2)
+--! 3. AND: R3 = R1 & R2
+--! 4. ADD: R3 = R1 + R2
+--! 5. SUB: R3 = R1 - R2
+--! 6. XOR: R3 = R1 ^ R2
 --!
 --! Two architectures are provided:
 --! - `rtl` (default): Uses a process with a case statement to perform the ALU operations.

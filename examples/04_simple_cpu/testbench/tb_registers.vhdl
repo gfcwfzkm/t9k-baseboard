@@ -1,4 +1,16 @@
--- VHDL-2008 Testbench for Register File
+-- Dependency: src/registers.vhdl
+-- TEROSHDL Documentation:
+--! @title Testbench for Register File
+--! @author Pascal G. (gfcwfzkm)
+--! @version 1.0
+--! @date 08.07.2025
+--! @brief Testbench for the register file of a simple CPU
+--!
+--! This VHDL code implements a testbench for the register file of a simple CPU.
+--! It tests the functionality of the register file, including reading and writing to registers,
+--! resetting registers, and verifying special outputs for jump address, ALU operand A, and I/O address.
+--!
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -9,8 +21,10 @@ end entity tb_registers;
 
 architecture tb of tb_registers is
 
+	--! Clock period for the testbench
     constant CLK_PERIOD : time := 10 ns;
     
+	--! Signals for the testbench
     signal clk           : std_logic := '0';
     signal reset         : std_logic := '0';
     signal write_address : std_logic_vector(2 downto 0) := (others => '0');
@@ -22,24 +36,26 @@ architecture tb of tb_registers is
     signal alu_operand_a : std_logic_vector(7 downto 0);
     signal io_address    : std_logic_vector(7 downto 0);
     
+	--! Signals for test control
 	signal tb_finished   : boolean := false;
+	--! Signal to indicate if the test passed
     signal test_passed   : boolean := true;
 
 begin
 
-    -- Instantiate Unit Under Test
+    --! Instantiate Unit Under Test
     DUT: entity work.registers
         port map (
-            clk            => clk,
-            reset          => reset,
-            write_address  => write_address,
-            write_data     => write_data,
-            write_enable   => write_enable,
-            read_address   => read_address,
-            read_data      => read_data,
-            jump_address   => jump_address,
-            alu_operand_a  => alu_operand_a,
-            io_address     => io_address
+            clk_i            => clk,
+            reset_i          => reset,
+            write_address_i  => write_address,
+            write_data_i     => write_data,
+            write_enable_i   => write_enable,
+            read_address_i   => read_address,
+            read_data_o      => read_data,
+            jump_address_o   => jump_address,
+            alu_operand_a_o  => alu_operand_a,
+            io_address_o     => io_address
         );
 
     -- Clock generation
