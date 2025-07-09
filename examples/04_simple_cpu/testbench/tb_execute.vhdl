@@ -115,16 +115,16 @@ begin
     -- Instantiate DUT
     DUT: entity work.execute(rtl)
     port map (
-        instruction_type => instruction_type,
-        alu_op => alu_op,
-        jump_condition => jump_condition,
-        dst_reg_i => dst_reg_i,
-        alu_operand_a => alu_operand_a,
-        source_register => source_register,
-        immediate_value => immediate_value,
-        dst_reg_o => dst_reg_o,
-        result_register => result_register,
-        condition_result => condition_result
+        instruction_type_i  => instruction_type,
+        alu_op_i            => alu_op,
+        jump_condition_i    => jump_condition,
+        dst_reg_i           => dst_reg_i,
+        alu_operand_a_i     => alu_operand_a,
+        source_register_i   => source_register,
+        immediate_value_i   => immediate_value,
+        dst_reg_o           => dst_reg_o,
+        result_data_o       => result_register,
+        condition_result_o  => condition_result
     );
     
     -- Test process

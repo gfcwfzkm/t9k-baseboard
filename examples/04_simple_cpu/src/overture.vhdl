@@ -12,7 +12,7 @@
 --!
 --! The CPU has no RAM but it can be implemented through the I/O interface.
 --! The memory interface supports up to 256 bytes of read-only memory, while
---! the I/O interface allows to read and write up to 256 bytes of data / addresses.
+--! the I/O interface allows to read and write to 256 addresses.
 --!
 --! The ISA has four types of instructions:
 --! - Load Immediate: Loads a 6-bit immediate value into a register.
