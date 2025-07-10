@@ -1,16 +1,17 @@
 -- TEROSHDL Documentation:
 --! @title Swiss Flag Test Image Generator
 --! @author Pascal G. (gfcwfzkm)
---! @version 1.0
+--! @version 1.1
 --! @date 19.03.2024
 --! @brief Generates a test image with the Swiss flag and color strips for video output.
 --!
 --! Developed for the BFH oscilloscope project.
 --!
 --! This module generates a test image for video output, which includes the Swiss flag
---! and color strips at the top and bottom of the screen. The image is drawn in a 1280x720
---! resolution, with the Swiss flag centered in the middle of the screen.
---! The color strips are 160 pixels wide and display a sequence of colors.
+--! and color strips at the top and bottom of the screen. While the video timing generator
+--! generates a video resolution of 1920x1080p, only half that resolution is actually used
+--! by the test image generator, resulting in an actual resolution of 960x540p, with a 
+--! Swiss flag in the center of the size 320x320, and a color bar at the top and bottom
 --!
 --! Only the MSB of the RGB color signals are used, as this is a 3-bit color output.
 --!
@@ -44,14 +45,17 @@ end entity video;
 
 architecture rtl of video is
     --! Constants for the color strip test
-    constant testbar : positive := 160;
+    constant testbar : positive := 120;
 
     --! X coordinates of the currently drawn pixel
-    signal draw_x : unsigned(11 downto 0);
+    signal draw_x : unsigned(9 downto 0);
     --! Y coordinates of the currently drawn pixel
-    signal draw_y : unsigned(10 downto 0);
+    signal draw_y : unsigned(9 downto 0);
     --! Active signal to indicate if the current pixel is being drawn
     signal draw_active : std_logic;
+
+	signal video_x : unsigned(12 downto 0);
+	signal video_y : unsigned(11 downto 0);
 
     --! Video Color Output Registers
     signal r_next, r_reg, g_next, g_reg, b_next, b_reg : std_logic;
@@ -65,6 +69,9 @@ begin
     de <= de_reg;
     hsync <= hsync_reg;
     vsync <= vsync_reg;
+
+	draw_x <= video_x(10 downto 1);
+	draw_y <= video_y(10 downto 1);
 
     --! Register Process
     REGBANK : process (reset, clk) begin
@@ -98,51 +105,52 @@ begin
             -- Render a test color strip at the top and bottom
             -- The test color strip is 7 colors, each 160 pixels wide
             -- The bottom strip follows a different order than the top strip
-            if draw_y < 200 then				
+            -- Uses GrayCode (bgr <= 000) to create the color bar
+            if draw_y < 110 then				
                 if (draw_x < testbar) then
-                    r_next <= '1';
+                    null;
                 elsif (draw_x < (testbar * 2)) then
-                    g_next <= '1';
+                    r_next <= '1';
                 elsif (draw_x < (testbar * 3)) then
                     r_next <= '1';
                     g_next <= '1';
                 elsif (draw_x < (testbar * 4)) then
-                    b_next <= '1';
+                    g_next <= '1';
                 elsif (draw_x < (testbar * 5)) then
-                    r_next <= '1';
+                    g_next <= '1';
                     b_next <= '1';
                 elsif (draw_x < (testbar * 6)) then
                     g_next <= '1';
                     b_next <= '1';
+                    r_next <= '1';
                 elsif (draw_x < (testbar * 7)) then
                     r_next <= '1';
-                    g_next <= '1';
                     b_next <= '1';
                 else
-                    null; -- No color in the last spot of the strip
+                    b_next <= '1';
                 end if;
-            elsif draw_y > 520 then
+            elsif draw_y > 430 then
                 if (draw_x < testbar) then
-                    null; -- No color in the last spot of the strip
+                    b_next <= '1';
                 elsif (draw_x < (testbar * 2)) then
                     r_next <= '1';
-                    g_next <= '1';
                     b_next <= '1';
                 elsif (draw_x < (testbar * 3)) then
                     g_next <= '1';
                     b_next <= '1';
-                elsif (draw_x < (testbar * 4)) then
                     r_next <= '1';
+                elsif (draw_x < (testbar * 4)) then
+                    g_next <= '1';
                     b_next <= '1';
                 elsif (draw_x < (testbar * 5)) then
-                    b_next <= '1';
+                    g_next <= '1';
                 elsif (draw_x < (testbar * 6)) then
                     r_next <= '1';
                     g_next <= '1';
                 elsif (draw_x < (testbar * 7)) then
-                    g_next <= '1';
+                    r_next <= '1';
                 else
-                    r_next <= '1';					
+                    null;
                 end if;
             else
 
@@ -150,19 +158,19 @@ begin
                 -- with the proportions: 6, 7, 6, 7, 6
 
                 -- Render the red background in this area
-                if ((draw_x > 480) and (draw_x < 800)) then
+                if ((draw_x > 320) and (draw_x < 640)) then
                     r_next <= '1';
                 end if;
 
                 -- Draw the white foreground of the flag
-                if ((draw_y >= 260) and (draw_y <= 460)) then
-                    if ((draw_x > 610) and (draw_x < 670)) then
+                if ((draw_y >= 170) and (draw_y <= 370)) then
+                    if ((draw_x > 450) and (draw_x < 510)) then
                         g_next <= '1';
                         b_next <= '1';
                     end if;
                     
-                    if ((draw_y >= 330) and (draw_y <= 390)) then
-                        if ((draw_x > 540) and (draw_x < 740)) then
+                    if ((draw_y >= 240) and (draw_y <= 300)) then
+                        if ((draw_x > 380) and (draw_x < 580)) then
                             g_next <= '1';
                             b_next <= '1';
                         end if;
@@ -173,24 +181,24 @@ begin
         end if;
     end process CHFLAG;
 
-    --! Video Timing Generator, configured for 1280x720p@60Hz
+    --! Video Timing Generator, configured for 1920x1080p@30Hz
     VIDEO_TIMING_GENERATOR : entity work.vtgen
         generic map (
-            H_VISIBLE => 1280,  --! Horizontal resolution
-            H_FPORCH  => 110,   --! Horizontal Front Porch
-            H_SYNC    => 40,    --! Horizontal Sync Pulse
-            H_BPORCH  => 220,   --! Horizontal Back Porch
-            V_VISIBLE => 720,   --! Vertical resolution
-            V_FPORCH  => 5,     --! Vertical Front Porch
+            H_VISIBLE => 1920,  --! Horizontal resolution
+            H_FPORCH  => 88,    --! Horizontal Front Porch
+            H_SYNC    => 44,    --! Horizontal Sync Pulse
+            H_BPORCH  => 148,   --! Horizontal Back Porch
+            V_VISIBLE => 1080,  --! Vertical resolution
+            V_FPORCH  => 4,     --! Vertical Front Porch
             V_SYNC    => 5,     --! Vertical Sync Pulse
-            V_BPORCH  => 20     --! Vertical Back Porch,
+            V_BPORCH  => 36     --! Vertical Back Porch,
         )
         port map (
             clk         => clk,
             reset       => reset,
             disp_active => draw_active,
-            disp_x      => draw_x,
-            disp_y      => draw_y,
+            disp_x      => video_x,
+            disp_y      => video_y,
             hdmi_vsync  => vsync_next,
             hdmi_hsync  => hsync_next,
             hdmi_de     => de_next

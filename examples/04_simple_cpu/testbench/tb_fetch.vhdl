@@ -1,4 +1,4 @@
--- Dependency: src/fetch.vhdl
+-- Dependency: src/overture/fetch.vhdl
 -- TEROSHDL Documentation:
 --! @title Fetch Unit Testbench
 --! @author Pascal G. (gfcwfzkm)

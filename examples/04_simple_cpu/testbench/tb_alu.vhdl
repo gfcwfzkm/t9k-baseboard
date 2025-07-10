@@ -1,4 +1,4 @@
--- Dependency: src/alu.vhdl
+-- Dependency: src/overture/alu.vhdl
 -- TEROSHDL Documentation:
 --! @title ALU Testbench
 --! @author Pascal G. (gfcwfzkm)

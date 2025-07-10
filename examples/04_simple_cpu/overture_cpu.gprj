@@ -5,6 +5,19 @@
     <Version>5</Version>
     <Device name="GW1NR-9C" pn="GW1NR-LV9QN88PC6/I5">gw1nr9c-004</Device>
     <FileList>
-        <File path="src/barrel_shifter.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/overture/alu.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/overture/barrel_shifter.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/overture/condition.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/overture/decode.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/overture/execute.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/overture/fetch.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/overture/overture.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/overture/registers.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/overture/write_back.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/ram.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/rom.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/soc_io.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/top.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/overture_soc.sdc" type="file.sdc" enable="1"/>
     </FileList>
 </Project>

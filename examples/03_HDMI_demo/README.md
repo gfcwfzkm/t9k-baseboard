@@ -1,7 +1,7 @@
 # HDMI VHDL Tang Nano 9k Demo
 
 This is a simple demo of HDMI output using the Tang Nano 9k FPGA board.
-The demo generates a simple test color pattern and shows the swiss flag on a 1280x720 HDMI display.
+The demo generates a simple test color pattern and shows the swiss flag on a 1920x1080p HDMI display.
 
 The code is documented and there are tests for the TMDS encoder. Otherwise write me or open up an issue if you have questions.
 
@@ -11,8 +11,8 @@ The code is documented and there are tests for the TMDS encoder. Otherwise write
 
 | Resource | Used | Utilization |
 |----------|------|-------------|
-| Logic Cells | 136 (121 LUT, 15 ALU) / 8640 | 2% |
-| Register | 58 / 6693 | <1% |
+| Logic Cells | 140 (124 LUT, 16 ALU) / 8640 | 2% |
+| Register | 61 / 6693 | <1% |
 | -- Register as Latch | 0 / 6693 | 0% |
 | -- Register as FF | 58 / 6693 | <1% |
 | BSRAM | 0 / 26 | 0% |

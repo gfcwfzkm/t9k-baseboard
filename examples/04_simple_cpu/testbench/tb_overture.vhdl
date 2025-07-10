@@ -1,4 +1,4 @@
--- Dependency: src/alu.vhdl, src/barrel_shifter.vhdl, src/condition.vhdl, src/execute.vhdl, src/decode.vhdl, src/fetch.vhdl, src/registers.vhdl, src/write_back.vhdl, src/overture.vhdl
+-- Dependency: src/overture/alu.vhdl, src/overture/barrel_shifter.vhdl, src/overture/condition.vhdl, src/overture/execute.vhdl, src/overture/decode.vhdl, src/overture/fetch.vhdl, src/overture/registers.vhdl, src/overture/write_back.vhdl, src/overture/overture.vhdl
 -- TEROSHDL Documentation:
 --! @title Testbench for Overture CPU
 --! @author Pascal G. (gfcwfzkm)

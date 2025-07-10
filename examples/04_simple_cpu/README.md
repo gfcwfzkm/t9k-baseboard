@@ -19,6 +19,7 @@ In contrast to the other examples, this will have a more theoretical, educationa
 6. [Execute](#6-execute)
 7. [Register File](#7-register-file)
 8. [Write Back](#8-write-back)
+9. [Assembling the Overture CPU](#9-assembling-the-overture-cpu)
 9. [I/O Operations](#9-io-operations)
 10. [Example Program](#10-example-program)
 11. [Conclusion](#11-conclusion)
@@ -202,7 +203,7 @@ end process PROGRAM_COUNTER;
 ...
 ```
 
-See TODOFILE to see the full implementation of the Fetch Unit, alongside with the TODOTESTBENCH to verify its functionality.
+See [fetch.vhdl](src/overture/fetch.vhdl) to see the full implementation of the Fetch Unit, alongside with the [testbench](testbench/tb_fetch.vhdl) to verify its functionality.
 
 ## [5. Decode](#chapters)
 
@@ -214,35 +215,40 @@ The Decode Unit has the following inputs and outputs:
 - **Inputs:**
   - `fetched_instruction`: The instruction to be decoded, fetched from the Fetch Unit.
 - **Outputs:**
+  - `instruction_type`: The type of the instruction, which is used to determine how to execute it.
   - `alu_op`: The ALU operation to be performed, based on the instruction.
   - `src_reg`: The source register for the copy instruction.
   - `dest_reg`: The destination register for the copy instruction.
   - `jump_condition`: The condition for the jump/branch instruction.
   - `immediate_value`: The immediate value for the load immediate instruction.
+  - `halt`: Signal to indicate that the CPU is halted and no further instructions should be executed.
 
-The implementation is straightforward, as we simply extract the relevant bits from the fetched instruction. Based on the instruction type, we set the control signals accordingly.
+The implementation is straightforward, as we simply extract the relevant bits from the fetched instruction. Based on the instruction type, we set the control signals accordingly. My implementation uses the source and destination register bits also for immediate and ALU instructions, to set the destination registers or to get the second operand for the ALU operations. The decoder also sets the halt signal to '1' if the decoder encounters an undefined instruction. The source register is directly used to forward the corresponding register value to the Execute Unit.
 
-```vhdl
-...
-alu_op          <= fetched_instruction(2 downto 0); -- ALU operation bits
-src_reg         <= fetched_instruction(5 downto 3); -- Source register bits
-dest_reg        <= fetched_instruction(2 downto 0); -- Destination register bits
-jump_condition  <= fetched_instruction(2 downto 0); -- Jump condition bits
-immediate_value <= fetched_instruction(5 downto 0); -- Immediate value bits
-...
-```
-
-See TODOFILE to see the full implementation of the Decode Unit, alongside with the TODOTESTBENCH to verify its functionality.
+See [decode.vhdl](src/overture/decode.vhdl) to see the full implementation of the Decode Unit, alongside with the [testbench](testbench/tb_decode.vhdl) to verify its functionality.
 
 ## [6. Execute](#chapters)
 
-> **WIP**: This section is a work in progress and will be completed in the future.
-
 The Execute Unit is responsible for executing the decoded instruction. It takes the control signals from the Decode Unit and performs the necessary operations, such as ALU operations or jump condition checks. Since the ALU operations take the registers R1 and R2 as input operands, the Execute Unit also needs access to the Register File to read the values of these registers. The jump condition checks are also performed in the Execute Unit, using the value of register R3 to determine whether to jump or branch.
 
-## [7. Register File](#chapters)
+To ease up development and testing, the Execute Unit is split into three parts; the ALU, the Compare Unit for jumps/branches and a barrel shifter for shift operations.
 
-> **WIP**: This section is a work in progress and will be completed in the future.
+The Execute Unit wires these components together and directs the data flow between them. It has the following inputs and outputs:
+- **Inputs:**
+  - `instruction_type`: The type of the instruction, which is used to determine how to execute it.
+  - `alu_op`: The ALU operation to be performed, based on the instruction.
+  - `jump_condition`: The condition for the jump/branch instruction.
+  - `dst_reg`: The destination register for the copy instruction.
+  - `alu_operand_a`: The first operand for the ALU operation, which is the value of register R1.
+  - `source_register`: The contents of the source register, used for copy, jump/branch and ALU (operand B) instructions.
+  - `immediate_value`: The immediate value for the load immediate instruction, which is loaded into register R0.
+- **Outputs:**
+  - `instruction_type`: The type of the instruction, which is used to determine how to execute it, forwarded to the next unit.
+  - `dst_reg`: The destination register for the copy instruction, forwarded to the next unit.
+  - `result_data`: The result of the ALU operation, the immediate value or the value to copy to the destination register.
+  - `condition_result`: The result of the jump/branch condition check, which is used to determine whether to jump or branch.
+
+## [7. Register File](#chapters)
 
 The Register File is responsible for storing the registers R0 to R6. It provides read and write access to the registers, with direct access to the registers R1 to R3 for the Execute Unit. The Register File also provides access to the I/O device address register R6, which is used to read from and write to the I/O device. Finally, direct access to the register R0 is provided to the Fetch Unit, to load in a new address if a valid jump/branch condition has been met. The values of these registers are updated by the Write Back Unit, at the end of the instruction execution.
 
@@ -257,44 +263,103 @@ So at the end, the Register File simply consists of a 7-element array of 8-bit r
   - `read_reg`: The register to read from (R0 to R6), used by the Copy instruction.
 - **Outputs:**
   - `read_data`: The data read from the registers.
-  - `register0`: The value of register R0, used to load immediate values and as jump/branch destination.
-  - `register1`: The value of register R1, used as the first operand for ALU operations.
-  - `register2`: The value of register R2, used as the second operand for ALU operations.
-  - `register3`: The value of register R3, used to check the jump/branch condition.
+  - `jump_address`: The value of register R0, used as jump/branch destination.
+  - `alu_operand_a`: The value of register R1, used as the first operand for ALU operations.
+  - `io_address`: The value of register R6, used as the address for the I/O device.
 
 ```vhdl
 ...
---! Process to handle the register file
-REGISTER_FILE : process(clk, reset) begin
-	if rising_edge(clk) then
-		if reset = '1' then
-			-- Reset all registers to 0 on reset
-			for i in 0 to 6 loop
-				registers(i) <= (others => '0');
-			end loop;
-		else
-			if write_enable = '1' then
-				-- Write data to the specified register
-				registers(to_integer(unsigned(write_reg))) <= write_data;
-			end if;
-		end if;
-	end if;
-end process REGISTER_FILE;
+-- Read data from the specified register
+read_data_o <= x"00" when read_address_i = "111" else register_file(to_integer(unsigned(read_address_i)));
+    
+-- Direct outputs for special registers
+jump_address_o  <= register_file(0); -- Register 0 holds the jump address
+alu_operand_a_o <= register_file(1); -- Register 1 holds the ALU operand A
+io_address_o    <= register_file(6); -- Register 6 holds the I/O address
 
---! Read data from the specified register
-read_data <= registers(to_integer(unsigned(read_reg)));
-
---! Provide direct access to the registers R0 to R3
-register0 <= registers(0);
-register1 <= registers(1);
-register2 <= registers(2);
-register3 <= registers(3);
+--! Clock process for register file
+CLKREG : process (clk_i, reset_i)
+begin
+    if rising_edge(clk_i) then
+        if reset_i = '1' then
+            register_file <= (others => (others => '0')); -- Reset all registers to 0
+        else
+            register_file <= register_file; -- Keep current state
+            
+            if write_enable_i = '1' and unsigned(write_address_i) < register_file'length then
+                -- Write data to the specified register
+                register_file(to_integer(unsigned(write_address_i))) <= write_data_i;
+            end if;
+        end if;
+    end if;
+end process CLKREG;
 ...
 ```
+
+See [register_file.vhdl](src/overture/registers.vhdl) to see the full implementation of the Register File, alongside with the [testbench](testbench/tb_registers.vhdl) to verify its functionality.
 
 ## [8. Write Back](#chapters)
 
 > **WIP**: This section is a work in progress and will be completed in the future.
+
+The Write Back Unit is responsible for writing back the result of the instruction execution to the registers or the I/O device. It takes the result of the instruction execution from the Execute Unit and writes it to the destination register or the I/O device, depending on the instruction type. It has to control the write enable signal for the Register File and the I/O device, to ensure that the data is written correctly.
+
+The Write Back Unit has the following inputs and outputs:
+- **Inputs:**
+  - `instruction_type`: The type of the instruction, which is used to determine how to write back the result.
+  - `dst_reg`: The destination register for the copy instruction, which is used to determine where to write the result.
+  - `result_data`: The result of the instruction execution, which is written back to the destination register or the I/O device.
+- **Outputs:**
+  - `register_data`: The data to be written to the destination register, which is the result of the instruction execution.
+  - `register_write_enable`: The write enable signal for the Register File, which is set to '1' if the instruction writes to a register.
+  - `register_write_address`: The address of the destination register, which is used to write the result to the Register File.
+  - `io_data`: The data to be written to the I/O device, which is the result of the instruction execution.
+  - `io_write_enable`: The write enable signal for the I/O device, which is set to '1' if the instruction writes to the I/O device.
+
+```vhdl
+...
+--! Write Back process that handles the final stage of instruction execution
+--! It determines whether to write back to registers or I/O based on the instruction type
+WB : process (instruction_type_i, dst_reg_i, result_data_i)
+begin
+
+    register_data_o <= result_data_i; -- Default output for register data
+    registers_write_address_o <= dst_reg_i;
+    io_data_o <= result_data_i;
+    registers_write_enable_o <= '0';
+    io_data_write_enable_o <= '0';
+
+    case instruction_type_i is
+        when "00" | "01" => -- Load immediate or ALU operation
+            registers_write_enable_o <= '1'; -- Enable register write
+        when "10" => -- I/O operation
+            if dst_reg_i = "111" then -- Write to io
+                io_data_o <= result_data_i; -- Write data to I/O
+                io_data_write_enable_o <= '1'; -- Enable I/O write
+            else
+                registers_write_address_o <= dst_reg_i; -- Write to register
+                registers_write_enable_o <= '1';
+            end if;
+        when others =>
+            -- No write-back for other instruction types
+            null;
+    end case;
+
+end process WB;
+...
+```
+
+See [writeback.vhdl](src/overture/write_back.vhdl) to see the full implementation of the Write Back Unit.
+
+## [9. Assembling the Overture CPU](#chapters)
+
+The Overture CPU is assembled from the individual components we have implemented so far. The Fetch Unit, Decode Unit, Execute Unit, Register File and Write Back Unit are connected together to form the complete CPU. The only additional logic needed here, is to select the `source_register` based on the source register address:
+
+```vhdl
+source_register_EX <= io_data_read_i when src_reg_addr_DE_RF = "111" else read_register_RF_EX;
+```
+
+See [overture_cpu.vhdl](src/overture/overture_cpu.vhdl) to see the full implementation of the Overture CPU, alongside with the [testbench](testbench/tb_overture_cpu.vhdl) to verify its functionality. The testbench runs a few basic programs to verify that the CPU works as expected.
 
 ## [9. I/O Operations](#chapters)
 

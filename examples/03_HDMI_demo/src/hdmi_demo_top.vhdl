@@ -3,9 +3,9 @@
 --! @author Pascal G. (gfcwfzkm)
 --! @version 1.0
 --! @date 15.06.2025
---! @brief Demo to render a simple 720p HDMI video output on the Tang Nano 9K board
+--! @brief Demo to render a simple 1080p HDMI video output on the Tang Nano 9K board
 --!
---! This is a simple demo to render a 720p HDMI video output on the Tang Nano 9K board.
+--! This is a simple demo to render a 1080p HDMI video output on the Tang Nano 9K board.
 --! It uses a video clock of 74.25 MHz, which is 5x the TMDS clock speed of 371.25 MHz.
 --!
 --! While the video generator is identical to the ones used for VGA, the trick here is
@@ -118,7 +118,7 @@ architecture RTL of top is
     signal red, green, blue : std_logic_vector(7 downto 0);
     --! Video control signals
     signal disp_en, hsync, vsync : std_logic;
-
+	signal int_rst : std_logic;
 begin
 
     -- If button pressed, reset it all. If released, increment counter
@@ -130,16 +130,21 @@ begin
             if btn_s1 = '1' then -- BTN S1 pressed
                 rst_counter_reg <= (others => '0');
             else
-                if rst_counter_reg /= RST_CNT_TOP then
+                if rst_counter_reg /= RST_CNT_TOP and pll_lock = '1' then
                     rst_counter_reg <= rst_counter_reg + 1;
                 end if;
             end if;
         end if;
     end process RST_DEBOUNCE;
 
-    --! Release the reset when the counter reaches the TOP value AND the PLL is locked
-    reset <= (and rst_counter_reg) and pll_lock;
-    
+	int_rst <= (and rst_counter_reg) and pll_lock;
+
+    CLKRST : process (clk_video, rst_counter_reg) begin
+        if rising_edge(clk_video) then
+            reset <= int_rst;
+		end if;
+	end process CLKRST;
+
     -- Repurposed video test generator, only supports 3-bit colors, so only the MSB
     -- of the color signal vectors is set
     --! Video Test Image Generator

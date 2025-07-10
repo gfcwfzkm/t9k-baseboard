@@ -1,4 +1,4 @@
--- Dependency: src/registers.vhdl
+-- Dependency: src/overture/registers.vhdl
 -- TEROSHDL Documentation:
 --! @title Testbench for Register File
 --! @author Pascal G. (gfcwfzkm)

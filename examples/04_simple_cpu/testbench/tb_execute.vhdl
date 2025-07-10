@@ -1,4 +1,4 @@
--- Dependency: src/alu.vhdl, src/barrel_shifter.vhdl, src/condition.vhdl, src/execute.vhdl
+-- Dependency: src/overture/alu.vhdl, src/overture/barrel_shifter.vhdl, src/overture/condition.vhdl, src/overture/execute.vhdl
 -- TEROSHDL Documentation:
 --! @title Execute Unit Testbench
 --! @author Pascal G. (gfcwfzkm)

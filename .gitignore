@@ -45,3 +45,4 @@ fp-info-cache
 # Simulation files / folders to ignore
 **/work/
 **.fst
+**/waveforms/

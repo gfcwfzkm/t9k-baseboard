@@ -1,4 +1,4 @@
--- Dependency: src/decode.vhdl
+-- Dependency: src/overture/decode.vhdl
 -- TEROSHDL Documentation:
 --! @title Decode Unit Testbench
 --! @author Pascal G. (gfcwfzkm)

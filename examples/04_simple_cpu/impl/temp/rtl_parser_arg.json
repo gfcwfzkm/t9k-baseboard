@@ -3,7 +3,67 @@
  "Files" : [
   {
    "Library" : "work",
-   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/barrel_shifter.vhdl",
+   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/top.vhdl",
+   "Type" : "vhdl"
+  },
+  {
+   "Library" : "work",
+   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/alu.vhdl",
+   "Type" : "vhdl"
+  },
+  {
+   "Library" : "work",
+   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/barrel_shifter.vhdl",
+   "Type" : "vhdl"
+  },
+  {
+   "Library" : "work",
+   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/condition.vhdl",
+   "Type" : "vhdl"
+  },
+  {
+   "Library" : "work",
+   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/decode.vhdl",
+   "Type" : "vhdl"
+  },
+  {
+   "Library" : "work",
+   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/execute.vhdl",
+   "Type" : "vhdl"
+  },
+  {
+   "Library" : "work",
+   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/fetch.vhdl",
+   "Type" : "vhdl"
+  },
+  {
+   "Library" : "work",
+   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/overture.vhdl",
+   "Type" : "vhdl"
+  },
+  {
+   "Library" : "work",
+   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/registers.vhdl",
+   "Type" : "vhdl"
+  },
+  {
+   "Library" : "work",
+   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/write_back.vhdl",
+   "Type" : "vhdl"
+  },
+  {
+   "Library" : "work",
+   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/ram.vhdl",
+   "Type" : "vhdl"
+  },
+  {
+   "Library" : "work",
+   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/rom.vhdl",
+   "Type" : "vhdl"
+  },
+  {
+   "Library" : "work",
+   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/soc_io.vhdl",
    "Type" : "vhdl"
   }
  ],

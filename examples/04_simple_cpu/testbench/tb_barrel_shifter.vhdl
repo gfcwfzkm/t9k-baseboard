@@ -1,4 +1,4 @@
--- Dependency: src/barrel_shifter.vhdl
+-- Dependency: src/overture/barrel_shifter.vhdl
 -- TEROSHDL Documentation:
 --! @title Barrel Shifter Testbench
 --! @author Pascal G. (gfcwfzkm)

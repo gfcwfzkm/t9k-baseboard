@@ -9,9 +9,34 @@ It uses the nvc simulator (https://github.com/nickg/nvc) to run the testbenches.
 """
 
 import os
+import shutil
 import subprocess
 
 if __name__ == "__main__":
+    # Capture waveforms too?
+    capture_waveforms = True  # Set to True if you want to capture waveforms
+
+    # Check if nvc or ghdl is installed
+    nvc_found = False
+    ghdl_found = False
+
+    try:
+        subprocess.run(["nvc", "--version"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        nvc_found = True
+    except subprocess.CalledProcessError:
+        print("\033[1;31m\033[1mError: nvc is not installed or not found in PATH.\033[0m")
+    
+    if not nvc_found:
+        try:
+            subprocess.run(["ghdl", "--version"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            ghdl_found = True
+        except subprocess.CalledProcessError:
+            print("\033[1;31m\033[1mError: ghdl is not installed or not found in PATH.\033[0m")
+    
+    if not nvc_found and not ghdl_found:
+        print("\033[1;31m\033[1mPlease install nvc or ghdl to run the testbenches.\033[0m")
+        exit(1)
+
     # Get the current directory of this script - it should be in the root of the simple CPU design
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -36,7 +61,16 @@ if __name__ == "__main__":
                 dep_files = first_line[len("-- Dependency:"):].strip().split(",")
                 dep_files = [dep.strip().replace("/", os.sep).replace("\\", os.sep) for dep in dep_files]
                 dependencies[tb] = dep_files
-    
+
+    # Check if a suitable folder for waveforms exists, if not create it
+    if capture_waveforms:
+        waveform_dir = os.path.join(script_dir, "waveforms")
+        if not os.path.exists(waveform_dir):
+            os.makedirs(waveform_dir)
+            print(f"\033[1;32m\033[1mCreated waveform directory: {waveform_dir}\033[0m")
+        else:
+            print(f"\033[1;32m\033[1mUsing existing waveform directory: {waveform_dir}\033[0m")
+
     error_counter = 0
     # Run each testbench with nvc and its dependencies
     for tb, deps in dependencies.items():
@@ -55,11 +89,32 @@ if __name__ == "__main__":
         # get the testbench name without the .vhdl extension - this will be the top level module name
         tb_name = os.path.splitext(tb)[0]
 
+        # If waveforms are captured, set the output file name
+        if capture_waveforms:
+            waveform_tb_dir = os.path.join(waveform_dir, tb_name)
+            if nvc_found:
+                wave_command = f'--wave={waveform_tb_dir}.fst --dump-arrays'
+            elif ghdl_found:
+                wave_command = f'--wave={waveform_tb_dir}.ghw'
+            else:
+                wave_command = ""
+        else:
+            wave_command = ""
+
         # Prepare the command to run nvc
-        nvc_command = f'nvc -a {" ".join(dep_paths)} {tb_path} --check-synthesis -e {tb_name} -r'
+        nvc_command = f'nvc -a {" ".join(dep_paths)} {tb_path} --check-synthesis -e {tb_name} -r --stop-time=1ms {wave_command}'
+        ghdl_command = f'ghdl -a {" ".join(dep_paths)} {tb_path} && ghdl -e {tb_name} && ghdl -r {tb_name} --stop-time=1ms {wave_command}'
 
         # Execute the command, capturing/printing the output
-        process = subprocess.run(nvc_command, shell=True, text=True, capture_output=True)
+        if nvc_found:
+            process = subprocess.run(nvc_command, shell=True, text=True, capture_output=True)
+        elif ghdl_found:
+            process = subprocess.run(ghdl_command, shell=True, text=True, capture_output=True)
+        else:
+            print("\033[1;31m\033[1mNo VHDL simulator found. Please install nvc or ghdl.\033[0m")
+            exit(1)
+
+        # Check the return code and print the output
         if process.returncode != 0:
             print("\033[1;31mError running testbench {tb}:\033[0m")
             print(process.stderr)
@@ -75,5 +130,11 @@ if __name__ == "__main__":
     else:
         print("\033[1;32m\033[1mAll testbenches ran successfully.\033[0m")
 
+    # Clean up the 'work' directory if it exists
+    work_dir = os.path.join(os.getcwd(), "work")
+    
+    if os.path.exists(work_dir):
+        shutil.rmtree(work_dir)
+        print(f"\033[1;32m\033[1mCleaned up work directory: {work_dir}\033[0m")
     
     # Run each testbench with nvc and its dependencies

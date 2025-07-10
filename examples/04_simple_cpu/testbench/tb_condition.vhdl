@@ -1,4 +1,4 @@
--- Dependency: src/condition.vhdl
+-- Dependency: src/overture/condition.vhdl
 -- TEROSHDL Documentation:
 --! @title Condition Check Testbench
 --! @author Pascal G. (gfcwfzkm)
