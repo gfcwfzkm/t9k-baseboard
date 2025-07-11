@@ -81,6 +81,8 @@ entity overture is
         io_data_write_o         : out std_logic_vector(7 downto 0);
         --! I/O data write enable output for controlling write operations to I/O
         io_data_write_enable_o  : out std_logic;
+		--! I/O data read enable signal to let the I/O module know that data is being read
+		io_data_read_enable_o   : out std_logic;
 
         --! Halted CPU output signal - if active, the CPU will not execute further instructions
         cpu_halted_o            : out std_logic
@@ -159,6 +161,7 @@ begin
     );
 
     source_register_EX <= io_data_read_i when src_reg_addr_DE_RF = "111" else read_register_RF_EX;
+    io_data_read_enable_o <= '1' when src_reg_addr_DE_RF = "111" else '0';
 
     EXECUTE_UNIT : entity work.execute(rtl)
         port map (
@@ -190,15 +193,15 @@ begin
     );
 
     WRITE_BACK_UNIT : entity work.write_back
-    port map (
-        instruction_type_i          => instruction_type_EX_WB,
-        dst_reg_i                   => dst_reg_addr_EX_WB,
-        result_data_i               => result_data_EX_WB,
-        register_data_o             => write_data_WB_RF,
-        registers_write_enable_o    => register_write_enable_WB_RF,
-        registers_write_address_o   => write_address_WB_RF,
-        io_data_o                   => io_data_write_o,
-        io_data_write_enable_o      => io_data_write_enable_o
+    	port map (
+        	instruction_type_i          => instruction_type_EX_WB,
+        	dst_reg_i                   => dst_reg_addr_EX_WB,
+        	result_data_i               => result_data_EX_WB,
+        	register_data_o             => write_data_WB_RF,
+        	registers_write_enable_o    => register_write_enable_WB_RF,
+        	registers_write_address_o   => write_address_WB_RF,
+        	io_data_o                   => io_data_write_o,
+        	io_data_write_enable_o      => io_data_write_enable_o
     );
 
 end architecture;

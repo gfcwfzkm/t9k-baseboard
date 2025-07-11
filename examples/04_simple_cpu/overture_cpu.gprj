@@ -14,10 +14,13 @@
         <File path="src/overture/overture.vhdl" type="file.vhdl" enable="1"/>
         <File path="src/overture/registers.vhdl" type="file.vhdl" enable="1"/>
         <File path="src/overture/write_back.vhdl" type="file.vhdl" enable="1"/>
-        <File path="src/ram.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/peripherals/debouncer.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/peripherals/delay.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/peripherals/gpio.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/peripherals/ram.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/peripherals/soc_io.vhdl" type="file.vhdl" enable="1"/>
         <File path="src/rom.vhdl" type="file.vhdl" enable="1"/>
-        <File path="src/soc_io.vhdl" type="file.vhdl" enable="1"/>
-        <File path="src/top.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/soc_top.vhdl" type="file.vhdl" enable="1"/>
         <File path="src/overture_soc.sdc" type="file.sdc" enable="1"/>
     </FileList>
 </Project>

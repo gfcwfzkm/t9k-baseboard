@@ -29,21 +29,6 @@ end entity tb_overture;
 
 architecture behavior of tb_overture is
 
-    -- Component Declaration for the Unit Under Test (UUT)
-    component overture
-        port (
-            clk_i                  : in std_logic;
-            reset_i                : in std_logic;
-            memory_data_i          : in std_logic_vector(7 downto 0);
-            memory_address_o       : out std_logic_vector(7 downto 0);
-            io_address_o           : out std_logic_vector(7 downto 0);
-            io_data_read_i         : in std_logic_vector(7 downto 0);
-            io_data_write_o        : out std_logic_vector(7 downto 0);
-            io_data_write_enable_o : out std_logic;
-            cpu_halted_o           : out std_logic
-        );
-    end component;
-
     -- Inputs
     signal clk_i          : std_logic := '0';
     signal reset_i        : std_logic := '1';
@@ -153,16 +138,18 @@ architecture behavior of tb_overture is
 begin
 
     -- Instantiate the Overture CPU
-    DUT: overture port map (
-        clk_i                  => clk_i,
-        reset_i                => reset_i,
-        memory_data_i          => memory_data_i,
-        memory_address_o       => memory_address_o,
-        io_address_o           => io_address_o,
-        io_data_read_i         => io_data_read_i,
-        io_data_write_o        => io_data_write_o,
-        io_data_write_enable_o => io_data_write_enable_o,
-        cpu_halted_o           => cpu_halted_o
+    DUT: entity work.overture
+		port map (
+        	clk_i                  => clk_i,
+        	reset_i                => reset_i,
+        	memory_data_i          => memory_data_i,
+        	memory_address_o       => memory_address_o,
+        	io_address_o           => io_address_o,
+        	io_data_read_i         => io_data_read_i,
+        	io_data_write_o        => io_data_write_o,
+        	io_data_write_enable_o => io_data_write_enable_o,
+			io_data_read_enable_o  => open,
+        	cpu_halted_o           => cpu_halted_o
     );
     
     -- Clock generation

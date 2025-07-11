@@ -25,7 +25,7 @@ entity registers is
         clk_i           : in std_logic;
         --! Active-high, synchronous reset signal to reset all registers
         reset_i         : in std_logic;
-        
+
         --! Register address for write operations
         write_address_i : in std_logic_vector(2 downto 0);
         --! Data to write to the specified register
@@ -58,7 +58,7 @@ begin
 
     -- Read data from the specified register
     read_data_o <= x"00" when read_address_i = "111" else register_file(to_integer(unsigned(read_address_i)));
-    
+
     -- Direct outputs for special registers
     jump_address_o  <= register_file(0); -- Register 0 holds the jump address
     alu_operand_a_o <= register_file(1); -- Register 1 holds the ALU operand A

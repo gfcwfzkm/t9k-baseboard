@@ -3,7 +3,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity top is
+entity soc_top is
     port (
         --! Clock input, 27 MHz on the Tang Nano 9K
         clk                     : in std_logic;
@@ -22,20 +22,14 @@ entity top is
         --! Digital, serial RGB LED output
         rgbled_ser              : out std_logic
     );
-end entity top;
+end entity soc_top;
 
-architecture rtl of top is
+architecture rtl of soc_top is
 
     type t_sanitizing_array is array (0 to 2) of std_logic_vector(6 downto 0);
     signal sanitizing_reg : t_sanitizing_array := (others => (others => '0'));
 
     signal reset                : std_logic;
-    signal joystick_down        : std_logic;
-    signal joystick_right       : std_logic;
-    signal joystick_up          : std_logic;
-    signal joystick_left        : std_logic;
-    signal joystick_center      : std_logic;
-    signal uart_rx              : std_logic;
 
     signal memory_data          : std_logic_vector(7 downto 0);
     signal memory_address       : std_logic_vector(7 downto 0);
@@ -43,6 +37,7 @@ architecture rtl of top is
     signal io_data_from_cpu     : std_logic_vector(7 downto 0);
     signal io_data_to_cpu       : std_logic_vector(7 downto 0);
     signal io_data_write_enable : std_logic;
+    signal io_data_read_enable  : std_logic;
     signal cpu_halted           : std_logic;
 
 begin
@@ -76,6 +71,7 @@ begin
             io_data_read_i          => io_data_to_cpu,
             io_data_write_o         => io_data_from_cpu,
             io_data_write_enable_o  => io_data_write_enable,
+			io_data_read_enable_o   => io_data_read_enable,
             cpu_halted_o            => cpu_halted
     );
 
@@ -91,11 +87,7 @@ begin
         port map (
             clk                     => clk,
             reset                   => reset,
-            joystick_down           => sanitizing_reg(2)(1),
-            joystick_right          => sanitizing_reg(2)(2),
-            joystick_up             => sanitizing_reg(2)(3),
-            joystick_left           => sanitizing_reg(2)(4),
-            joystick_center         => sanitizing_reg(2)(5),
+            joystick                => sanitizing_reg(2)(5 downto 1),
             uart_rx                 => sanitizing_reg(2)(6),
             uart_tx                 => uart_tx,
             leds                    => leds(4 downto 0),
@@ -103,7 +95,8 @@ begin
             io_address              => io_address,
             io_data_write           => io_data_from_cpu,
             io_data_read            => io_data_to_cpu,
-            io_data_write_enable    => io_data_write_enable
+            io_data_write_enable    => io_data_write_enable,
+            io_data_read_enable     => io_data_read_enable
     );
 
 end architecture;

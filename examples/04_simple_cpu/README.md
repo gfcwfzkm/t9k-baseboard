@@ -357,7 +357,10 @@ The Overture CPU is assembled from the individual components we have implemented
 
 ```vhdl
 source_register_EX <= io_data_read_i when src_reg_addr_DE_RF = "111" else read_register_RF_EX;
+io_data_read_enable_o <= '1' when src_reg_addr_DE_RF = "111" else '0';
 ```
+
+The other signal assignment is a simple signal to let the I/O peripherals know, that a read is being performed / requested on them. This was first not planned but as I started to work on some I/O peripherals, I realized that this would be really nice to have.
 
 See [overture_cpu.vhdl](src/overture/overture_cpu.vhdl) to see the full implementation of the Overture CPU, alongside with the [testbench](testbench/tb_overture_cpu.vhdl) to verify its functionality. The testbench runs a few basic programs to verify that the CPU works as expected.
 

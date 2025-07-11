@@ -3,11 +3,6 @@
  "Files" : [
   {
    "Library" : "work",
-   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/top.vhdl",
-   "Type" : "vhdl"
-  },
-  {
-   "Library" : "work",
    "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/alu.vhdl",
    "Type" : "vhdl"
   },
@@ -53,7 +48,27 @@
   },
   {
    "Library" : "work",
-   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/ram.vhdl",
+   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/debouncer.vhdl",
+   "Type" : "vhdl"
+  },
+  {
+   "Library" : "work",
+   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/delay.vhdl",
+   "Type" : "vhdl"
+  },
+  {
+   "Library" : "work",
+   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/gpio.vhdl",
+   "Type" : "vhdl"
+  },
+  {
+   "Library" : "work",
+   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/ram.vhdl",
+   "Type" : "vhdl"
+  },
+  {
+   "Library" : "work",
+   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/soc_io.vhdl",
    "Type" : "vhdl"
   },
   {
@@ -63,7 +78,7 @@
   },
   {
    "Library" : "work",
-   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/soc_io.vhdl",
+   "Path" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/soc_top.vhdl",
    "Type" : "vhdl"
   }
  ],

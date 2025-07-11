@@ -1,15 +1,15 @@
 [
  {
-  "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/top.vhdl",
+  "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/soc_top.vhdl",
   "InstLine" : 6,
-  "InstName" : "top",
-  "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/top.vhdl",
+  "InstName" : "soc_top",
+  "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/soc_top.vhdl",
   "ModuleLine" : 6,
-  "ModuleName" : "top",
+  "ModuleName" : "soc_top",
   "SubInsts" : [
    {
-    "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/top.vhdl",
-    "InstLine" : 69,
+    "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/soc_top.vhdl",
+    "InstLine" : 64,
     "InstName" : "OVERTURE_CPU",
     "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/overture.vhdl",
     "ModuleLine" : 64,
@@ -17,7 +17,7 @@
     "SubInsts" : [
      {
       "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/overture.vhdl",
-      "InstLine" : 137,
+      "InstLine" : 139,
       "InstName" : "FETCH_UNIT",
       "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/fetch.vhdl",
       "ModuleLine" : 17,
@@ -25,7 +25,7 @@
      },
      {
       "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/overture.vhdl",
-      "InstLine" : 149,
+      "InstLine" : 151,
       "InstName" : "DECODE_UNIT",
       "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/decode.vhdl",
       "ModuleLine" : 16,
@@ -33,7 +33,7 @@
      },
      {
       "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/overture.vhdl",
-      "InstLine" : 163,
+      "InstLine" : 166,
       "InstName" : "EXECUTE_UNIT",
       "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/execute.vhdl",
       "ModuleLine" : 18,
@@ -67,7 +67,7 @@
      },
      {
       "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/overture.vhdl",
-      "InstLine" : 178,
+      "InstLine" : 181,
       "InstName" : "REGISTER_FILE",
       "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/registers.vhdl",
       "ModuleLine" : 22,
@@ -75,7 +75,7 @@
      },
      {
       "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/overture.vhdl",
-      "InstLine" : 192,
+      "InstLine" : 195,
       "InstName" : "WRITE_BACK_UNIT",
       "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/overture/write_back.vhdl",
       "ModuleLine" : 16,
@@ -84,28 +84,102 @@
     ]
    },
    {
-    "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/top.vhdl",
-    "InstLine" : 83,
+    "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/soc_top.vhdl",
+    "InstLine" : 79,
     "InstName" : "OVERTURE_ROM",
     "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/rom.vhdl",
     "ModuleLine" : 15,
     "ModuleName" : "rom"
    },
    {
-    "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/top.vhdl",
-    "InstLine" : 90,
+    "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/soc_top.vhdl",
+    "InstLine" : 86,
     "InstName" : "OVERTURE_IOMAP",
-    "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/soc_io.vhdl",
+    "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/soc_io.vhdl",
     "ModuleLine" : 7,
     "ModuleName" : "soc_io",
     "SubInsts" : [
      {
-      "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/soc_io.vhdl",
+      "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/soc_io.vhdl",
       "InstLine" : 58,
       "InstName" : "OVERTURE_RAM",
-      "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/ram.vhdl",
-      "ModuleLine" : 16,
+      "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/ram.vhdl",
+      "ModuleLine" : 17,
       "ModuleName" : "ram"
+     },
+     {
+      "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/soc_io.vhdl",
+      "InstLine" : 75,
+      "InstName" : "OVERTURE_GPIO",
+      "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/gpio.vhdl",
+      "ModuleLine" : 17,
+      "ModuleName" : "gpio",
+      "SubInsts" : [
+       {
+        "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/gpio.vhdl",
+        "InstLine" : 66,
+        "InstName" : "DEBOUNCE_JOYSTICK[4].DEBOUNCER_ENTITY",
+        "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/debouncer.vhdl",
+        "ModuleLine" : 19,
+        "ModuleName" : "debouncer"
+       },
+       {
+        "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/gpio.vhdl",
+        "InstLine" : 66,
+        "InstName" : "DEBOUNCE_JOYSTICK[3].DEBOUNCER_ENTITY",
+        "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/debouncer.vhdl",
+        "ModuleLine" : 19,
+        "ModuleName" : "debouncer"
+       },
+       {
+        "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/gpio.vhdl",
+        "InstLine" : 66,
+        "InstName" : "DEBOUNCE_JOYSTICK[2].DEBOUNCER_ENTITY",
+        "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/debouncer.vhdl",
+        "ModuleLine" : 19,
+        "ModuleName" : "debouncer"
+       },
+       {
+        "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/gpio.vhdl",
+        "InstLine" : 66,
+        "InstName" : "DEBOUNCE_JOYSTICK[1].DEBOUNCER_ENTITY",
+        "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/debouncer.vhdl",
+        "ModuleLine" : 19,
+        "ModuleName" : "debouncer"
+       },
+       {
+        "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/gpio.vhdl",
+        "InstLine" : 66,
+        "InstName" : "DEBOUNCE_JOYSTICK[0].DEBOUNCER_ENTITY",
+        "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/debouncer.vhdl",
+        "ModuleLine" : 19,
+        "ModuleName" : "debouncer"
+       }
+      ]
+     },
+     {
+      "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/soc_io.vhdl",
+      "InstLine" : 92,
+      "InstName" : "OVERTURE_DELAY_US",
+      "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/delay.vhdl",
+      "ModuleLine" : 23,
+      "ModuleName" : "delay"
+     },
+     {
+      "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/soc_io.vhdl",
+      "InstLine" : 108,
+      "InstName" : "OVERTURE_DELAY_MS",
+      "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/delay.vhdl",
+      "ModuleLine" : 23,
+      "ModuleName" : "delay"
+     },
+     {
+      "InstFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/soc_io.vhdl",
+      "InstLine" : 124,
+      "InstName" : "OVERTURE_DELAY_S",
+      "ModuleFile" : "C:/Users/pasca/OneDrive/Dokumente/Elektronik/Projekte/t9k-baseboard/examples/04_simple_cpu/src/peripherals/delay.vhdl",
+      "ModuleLine" : 23,
+      "ModuleName" : "delay"
      }
     ]
    }
