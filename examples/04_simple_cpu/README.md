@@ -490,7 +490,7 @@ options:
 
 With the language defined, the disassembler can simply parse the binary or hex-string file and convert it into the above assembly code. It does not support macros, labels or constants but it's good enough in my opinion.
 
-The more challenging part is to write an assembler, which takes the assembly code and converts it back into a binary or hex-string file. The assembler is implemented in the same Python script and supports the same assembly language as the disassembler. It can handle labels, constants and macros, making it easy to write programs for the Overture CPU.
+The more challenging part is to write an **[assembler](assembler.py)**, which takes the assembly code and converts it back into a binary or hex-string file. The assembler is implemented in the same Python script and supports the same assembly language as the disassembler. It can handle labels, constants and macros, making it easy to write programs for the Overture CPU.
 
 In a first step, the assembler reads line by line, removes comments, splits it up into tokens per line and memorizes labels, constants and macros. In a second step, it converts these tokens into the corresponding binary instruction, adds the labels and constants into the instruction as needed, and expands the macros into the corresponding instructions. 
 
