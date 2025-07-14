@@ -41,3 +41,8 @@ fp-info-cache
 /examples/01_starting_project/impl/pnr
 /examples/02_RGBLED/impl/gwsynthesis
 /examples/02_RGBLED/impl/pnr
+
+# Simulation files / folders to ignore
+**/work/
+**.fst
+**/waveforms/

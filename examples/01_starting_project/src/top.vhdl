@@ -5,10 +5,10 @@ use ieee.math_real.all;
 
 entity top is 
     port (
-        clk   : in std_logic;	--! Clock input @ 27 MHz
-        rst_n : in std_logic;	--! Active low reset
+        clk   : in std_logic;   --! Clock input @ 27 MHz
+        rst_n : in std_logic;   --! Active low reset
         
-        leds  : out std_logic_vector(5 downto 0)	--! Output port for the LEDs
+        leds  : out std_logic_vector(5 downto 0)    --! Output port for the LEDs
     );
 end top;
 

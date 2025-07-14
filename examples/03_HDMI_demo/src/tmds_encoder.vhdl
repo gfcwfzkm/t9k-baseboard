@@ -27,18 +27,18 @@ use work.helper_pkg.all;
 entity tmds_encoder is
     port (
         --! Pixel Clock
-        clk			: in  std_logic;
+        clk         : in  std_logic;
         --! Synchronous Reset signal (active-high)
-        reset		: in  std_logic;
+        reset       : in  std_logic;
 
         --! Display Enable signal (active-high)
-        disp_enable	: in std_logic;
+        disp_enable : in std_logic;
         --! Horizontal Sync signal (active-high)
-        hsync		: in  std_logic;
+        hsync       : in  std_logic;
         --! Vertical Sync signal (active-high)
-        vsync		: in  std_logic;
+        vsync       : in  std_logic;
         --! Color Data input (8 bits)
-        color_data	: in std_logic_vector(7 downto 0);
+        color_data  : in std_logic_vector(7 downto 0);
 
         --! Encoded TMDS output (10 bits)
         tmds_encoded : out std_logic_vector(9 downto 0)
@@ -48,13 +48,13 @@ end entity tmds_encoder;
 architecture rtl of tmds_encoder is
 
     --! Output Register for the TMDS encoded data
-    signal tmds_output_next, tmds_output_reg 	: std_logic_vector(9 downto 0);
+    signal tmds_output_next, tmds_output_reg    : std_logic_vector(9 downto 0);
 
      --! DC Balancing Register to keep track of the sent 1s and 0s
-    signal dc_balancing_reg, dc_balancing_next	: signed(4 downto 0);
+    signal dc_balancing_reg, dc_balancing_next  : signed(4 downto 0);
 
     --! Intermediate signals for the transition-minimizing encoding
-    signal xored_color_data, xnored_color_data	: std_logic_vector(7 downto 0);
+    signal xored_color_data, xnored_color_data  : std_logic_vector(7 downto 0);
 begin
 
     xored_color_data(0) <= color_data(0);
@@ -62,8 +62,8 @@ begin
 
     TRANSITION_MINIMIZING : for n in 1 to 7 generate
     begin
-        xnored_color_data(n)	<= color_data(n) xor xnored_color_data(n - 1);
-        xored_color_data(n)		<= color_data(n) xnor xored_color_data(n - 1);
+        xnored_color_data(n)    <= color_data(n) xor xnored_color_data(n - 1);
+        xored_color_data(n)     <= color_data(n) xnor xored_color_data(n - 1);
     end generate TRANSITION_MINIMIZING;
 
     --! Register process to hold the TMDS output and DC balancing values
@@ -101,7 +101,7 @@ begin
                        ((ones_in_color_data = 4) and (color_data(0) = '0')) then
             tmds_intermediate := '0' & xored_color_data;
         else
-            tmds_intermediate := '1' & xnored_color_data;	
+            tmds_intermediate := '1' & xnored_color_data;
         end if DECIDE_XOR_XNOR;
 
         -- Count the ones in the partially encoded package, excluding the XNOR/XOR bit.
@@ -145,7 +145,7 @@ begin
                 else
                     tmds_output_next <= (not tmds_intermediate(8)) & tmds_intermediate(8) & not tmds_intermediate(7 downto 0);
                     dc_balancing_next <= dc_balancing_reg - ones_in_tmds_inter + zeros_in_tmds_inter;
-                end if;				
+                end if;
             else
                 -- We aren't in balance! Check if we have a lack or surplus of ones
                 -- and then invert the data based on this conclusion or not

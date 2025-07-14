@@ -105,14 +105,14 @@ begin
 
     --! Pixel Position Counter
     --! Increments the pixel position registers
-    PIXELMOVE : process (clk, reset) is	begin
+    PIXELMOVE : process (clk, reset) is begin
         if rising_edge(clk) then
             if reset = '1' then
                 disp_x_reg <= (others => '0');
                 disp_y_reg <= (others => '0');
             else
                 if (disp_x_reg = H_MAX) then
-                    disp_x_reg <= (others => '0');				
+                    disp_x_reg <= (others => '0');
                     if (disp_y_reg = V_MAX) then
                         disp_y_reg <= (others => '0');
                     else
