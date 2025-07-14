@@ -54,8 +54,8 @@ architecture rtl of video is
     --! Active signal to indicate if the current pixel is being drawn
     signal draw_active : std_logic;
 
-	signal video_x : unsigned(12 downto 0);
-	signal video_y : unsigned(11 downto 0);
+    signal video_x : unsigned(12 downto 0);
+    signal video_y : unsigned(11 downto 0);
 
     --! Video Color Output Registers
     signal r_next, r_reg, g_next, g_reg, b_next, b_reg : std_logic;
@@ -70,8 +70,8 @@ begin
     hsync <= hsync_reg;
     vsync <= vsync_reg;
 
-	draw_x <= video_x(10 downto 1);
-	draw_y <= video_y(10 downto 1);
+    draw_x <= video_x(10 downto 1);
+    draw_y <= video_y(10 downto 1);
 
     --! Register Process
     REGBANK : process (reset, clk) begin
@@ -106,7 +106,7 @@ begin
             -- The test color strip is 7 colors, each 160 pixels wide
             -- The bottom strip follows a different order than the top strip
             -- Uses GrayCode (bgr <= 000) to create the color bar
-            if draw_y < 110 then				
+            if draw_y < 110 then
                 if (draw_x < testbar) then
                     null;
                 elsif (draw_x < (testbar * 2)) then

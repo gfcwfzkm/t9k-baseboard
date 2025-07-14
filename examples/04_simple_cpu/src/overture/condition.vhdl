@@ -129,7 +129,7 @@ begin
 
     -- First get the intermediate signals
     is_result_negative <= operand_i(7);
-    is_result_non_zero <= or operand_i(6 downto 0);	-- VHDL-2008 feature!
+    is_result_non_zero <= or operand_i(6 downto 0); -- VHDL-2008 feature!
     -- If the above does not work, then you're probably on VHDL-1993 (poor Intel Quartus users),
     -- comment out the problematic line and uncomment the one below:
     -- is_result_non_zero <= '0' when unsigned(operand(6 downto 0)) = 0 else '1';
@@ -147,7 +147,7 @@ begin
     -- Finally, assign the result based on the condition_op
     -- Basically one big multiplexer to select the result based on the condition_op
     with condition_op_i select
-        result_o  <= 	cond_never_branch       when "000",
+        result_o <= cond_never_branch       when "000",
                     cond_equal_zero         when "001",
                     cond_less_than_zero     when "010",
                     cond_less_equal_zero    when "011",

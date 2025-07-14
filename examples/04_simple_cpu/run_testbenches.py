@@ -24,7 +24,7 @@ import time
 
 if __name__ == "__main__":
     # Capture waveforms too?
-    capture_waveforms = True  # Set to True if you want to capture waveforms
+    capture_waveforms = False  # Set to True if you want to capture waveforms
 
     # Check if nvc or ghdl is installed
     nvc_found = False
@@ -131,7 +131,7 @@ if __name__ == "__main__":
 
         # Check the return code and print the output
         if process.returncode != 0:
-            print("\033[1;31mError running testbench {tb}:\033[0m")
+            print(f"\033[1;31mError running testbench {tb}:\033[0m")
             print(process.stderr)
             error_counter += 1
         else:

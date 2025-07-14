@@ -64,7 +64,7 @@ architecture RTL of top is
         port (
             clkout : out std_logic;
             hclkin : in std_logic;
-            resetn : in std_logic	-- ACTIVE LOW
+            resetn : in std_logic   -- ACTIVE LOW
         );
     end component;
     -- Serializer for 10 bits
@@ -97,7 +97,7 @@ architecture RTL of top is
     --! TOP value of the reset counter
     constant RST_CNT_TOP   : unsigned(rst_counter_reg'high downto 0) := (others => '1');
     --! Reset signal, active HIGH
-    signal reset       	   : std_logic;
+    signal reset           : std_logic;
     --! PLL output lock signal, active HIGH
     signal pll_lock        : std_logic;
 
@@ -118,7 +118,7 @@ architecture RTL of top is
     signal red, green, blue : std_logic_vector(7 downto 0);
     --! Video control signals
     signal disp_en, hsync, vsync : std_logic;
-	signal int_rst : std_logic;
+    signal int_rst : std_logic;
 begin
 
     -- If button pressed, reset it all. If released, increment counter
@@ -137,13 +137,13 @@ begin
         end if;
     end process RST_DEBOUNCE;
 
-	int_rst <= (and rst_counter_reg) and pll_lock;
+    int_rst <= (and rst_counter_reg) and pll_lock;
 
     CLKRST : process (clk_video, rst_counter_reg) begin
         if rising_edge(clk_video) then
             reset <= int_rst;
-		end if;
-	end process CLKRST;
+        end if;
+    end process CLKRST;
 
     -- Repurposed video test generator, only supports 3-bit colors, so only the MSB
     -- of the color signal vectors is set

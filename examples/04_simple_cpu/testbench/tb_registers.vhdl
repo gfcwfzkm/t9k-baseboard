@@ -21,10 +21,10 @@ end entity tb_registers;
 
 architecture tb of tb_registers is
 
-	--! Clock period for the testbench
+    --! Clock period for the testbench
     constant CLK_PERIOD : time := 10 ns;
     
-	--! Signals for the testbench
+    --! Signals for the testbench
     signal clk           : std_logic := '0';
     signal reset         : std_logic := '0';
     signal write_address : std_logic_vector(2 downto 0) := (others => '0');
@@ -36,9 +36,9 @@ architecture tb of tb_registers is
     signal alu_operand_a : std_logic_vector(7 downto 0);
     signal io_address    : std_logic_vector(7 downto 0);
     
-	--! Signals for test control
-	signal tb_finished   : boolean := false;
-	--! Signal to indicate if the test passed
+    --! Signals for test control
+    signal tb_finished   : boolean := false;
+    --! Signal to indicate if the test passed
     signal test_passed   : boolean := true;
 
 begin
@@ -63,7 +63,7 @@ begin
 
     --! Main test process
     test_process: process
-		--! Perform Reset on the DUT
+        --! Perform Reset on the DUT
         procedure sync_reset is
         begin
             reset <= '1';
@@ -72,10 +72,10 @@ begin
             wait until rising_edge(clk);
         end procedure;
         
-		--! Write Data Byte to a Register
+        --! Write Data Byte to a Register
         procedure write_register(
             addr : in std_logic_vector(2 downto 0);
-            data : in std_logic_vector(7 downto 0))	is
+            data : in std_logic_vector(7 downto 0)) is
         begin
             write_address <= addr;
             write_data <= data;
@@ -84,20 +84,20 @@ begin
             write_enable <= '0';
         end procedure;
         
-		--! Verify the contents of a Register
+        --! Verify the contents of a Register
         procedure verify_register(
             addr      : in std_logic_vector(2 downto 0);
             expected  : in std_logic_vector(7 downto 0);
             test_name : in string) is
             variable index : natural;
         begin
-			-- Address we've written to
+            -- Address we've written to
             index := to_integer(unsigned(addr));
-			-- Set the read-address to the register we want to verify
+            -- Set the read-address to the register we want to verify
             read_address <= addr;
             wait for 1 ns;
             
-			-- Read the data from the register and check it
+            -- Read the data from the register and check it
             if read_data /= expected then
                 report test_name & ": Register " & integer'image(index) & 
                        " read error. Expected: " & to_hstring(expected) & 
@@ -129,9 +129,9 @@ begin
             end if;
         end procedure;
         
-		--! Verify illegal read from an unimplemented register
-		-- This should always return 00 for any address > 6
-		-- as the register file only has 7 registers (0-6)
+        --! Verify illegal read from an unimplemented register
+        -- This should always return 00 for any address > 6
+        -- as the register file only has 7 registers (0-6)
         procedure verify_illegal_read(
             addr      : in std_logic_vector(2 downto 0);
             test_name : in string)
@@ -151,7 +151,7 @@ begin
         -- Initialize
         wait for CLK_PERIOD;
 
-		report "Starting Register File Testbench..." severity note;
+        report "Starting Register File Testbench..." severity note;
         
         -- Reset functionality, ensure all registers are set to zero
         sync_reset;
@@ -186,7 +186,7 @@ begin
         end loop;
         
         -- Illegal write (address 7), nothing should change on the 
-		-- other registers as this write should be ignored
+        -- other registers as this write should be ignored
         write_register("111", x"FF");
         for i in 0 to 6 loop
             verify_register(
@@ -200,7 +200,7 @@ begin
         verify_illegal_read("111", "Illegal Read Test");
         
         -- Write enable disabled - try to write to a register
-		-- while the write_enable signal is low
+        -- while the write_enable signal is low
         write_register("001", x"AA");  -- Valid write to pre-set register
         verify_register("001", x"AA", "Write Enable Test");
         

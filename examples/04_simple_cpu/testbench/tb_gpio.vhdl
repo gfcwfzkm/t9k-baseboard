@@ -1,4 +1,13 @@
 -- Dependency: testbench/mock_debouncer.vhdl, src/peripherals/gpio.vhdl
+--! @title GPIO Peripheral Testbench
+--! @author Pascal G. (gfcwfzkm)
+--! @version 1.0
+--! @date 09.07.2025
+--! @brief Testbench for the GPIO peripheral
+--!
+--! This testbench verifies the functionality of the GPIO peripheral.
+--! It includes tests for LED writing, joystick reading, and debounce handling.
+--!
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -51,7 +60,7 @@ begin
     
     -- Test process
     test_process: process
-		variable error_count : integer := 0;
+        variable error_count : integer := 0;
 
         -- Helper procedure to check output
         procedure check_output(

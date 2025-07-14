@@ -17,32 +17,32 @@ use ieee.numeric_std.all;
 entity fetch is
     port (
         --! Clock signal
-        clk_i                 	: in std_logic;
+        clk_i                   : in std_logic;
         --! Active-high, synchronous reset signal
-        reset_i               	: in std_logic;
+        reset_i                 : in std_logic;
         
         -- Inputs
         --! Active-high signal to load jump_address to the program counter
-        perform_jump_i        	: in std_logic;
+        perform_jump_i          : in std_logic;
         --! Jump address to load into the program counter when perform_jump is asserted
-        jump_address_i        	: in std_logic_vector(7 downto 0);
+        jump_address_i          : in std_logic_vector(7 downto 0);
         --! Active-high signal to halt the program counter
-        halt_i                	: in std_logic;
+        halt_i                  : in std_logic;
         --! Memory data input, representing the fetched instruction from memory
-        memory_data_i         	: in std_logic_vector(7 downto 0);
+        memory_data_i           : in std_logic_vector(7 downto 0);
 
         -- Outputs
         --! Memory address output, representing the current program counter value
-        memory_address_o      	: out std_logic_vector(7 downto 0);
+        memory_address_o        : out std_logic_vector(7 downto 0);
         --! Fetched instruction output, representing the instruction fetched from memory
-        fetched_instruction_o	: out std_logic_vector(7 downto 0)
+        fetched_instruction_o   : out std_logic_vector(7 downto 0)
     );
 end entity fetch;
 
 architecture rtl of fetch is
 
     --! Internal signal to hold the program counter value
-    signal program_counter_reg : unsigned(7 downto 0);
+    signal program_counter_reg : unsigned(7 downto 0) := (others => '0');
 
 begin
 

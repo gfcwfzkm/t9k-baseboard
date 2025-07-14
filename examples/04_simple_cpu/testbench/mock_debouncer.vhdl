@@ -41,8 +41,8 @@ entity debouncer is
 end entity debouncer;
 
 architecture rtl of debouncer is
-	--! Fixed Debouncer Counter Value
-	constant MOCK_DEBOUNCE_COUNTER_MAX : positive := 3;
+    --! Fixed Debouncer Counter Value
+    constant MOCK_DEBOUNCE_COUNTER_MAX : positive := 3;
 
     --! Debouncer Counter Bit Width
     constant COUNTER_WIDTH : positive := integer(ceil(log2(real(MOCK_DEBOUNCE_COUNTER_MAX))));

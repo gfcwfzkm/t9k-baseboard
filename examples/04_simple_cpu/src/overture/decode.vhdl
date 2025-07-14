@@ -16,12 +16,12 @@ use ieee.numeric_std.all;
 entity decode is
     port (
         --! Fetched instruction input to decode into control signals
-        fetched_instruction_i	: in std_logic_vector(7 downto 0);
+        fetched_instruction_i   : in std_logic_vector(7 downto 0);
 
         --! Instruction type
         instruction_type_o      : out std_logic_vector(1 downto 0);
         --! Decoded ALU operation
-        alu_op_o              	: out std_logic_vector(2 downto 0);
+        alu_op_o                : out std_logic_vector(2 downto 0);
         --! Jump/Branch condition
         jump_condition_o        : out std_logic_vector(2 downto 0);
         --! Source register address
@@ -42,7 +42,7 @@ begin
     -- Decode the respective fields from the fetched instruction
     instruction_type_o <= fetched_instruction_i(7 downto 6); -- Instruction type bits
 
-	--! Decode process for the fetched instruction
+    --! Decode process for the fetched instruction
     process (instruction_type_o, fetched_instruction_i) is
     begin
         src_reg_o         <= "000"; -- Source register bits
@@ -74,12 +74,14 @@ begin
                 -- ALU operation, operand A is hard-wired to R1 but
                 -- operand B is the value in the src_reg - wired to R2
                 -- dst_reg is the result register, which is R3
+
+                -- Bits 3 to 5 are unused and expected to be zero. If not, illegal instruction
                 if fetched_instruction_i(5 downto 3) /= "000" then
                     halt_o <= '1'; -- Set halt signal to stop the CPU if ALU operation is not valid
                 else
                     src_reg_o <= std_logic_vector(to_unsigned(2,3)); -- R2 as operand A
                     dst_reg_o <= std_logic_vector(to_unsigned(3,3)); -- R3 as result register
-                    alu_op_o <= fetched_instruction_i(2 downto 0); -- ALU operation bits
+                    alu_op_o <= fetched_instruction_i(2 downto 0);   -- ALU operation bits
                 end if;
 
             when "10" => -- Copy Instruction Type

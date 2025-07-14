@@ -23,7 +23,7 @@ architecture tb of tb_fetch is
     constant CLK_PERIOD : time := 10 ns;
     
     -- Signals
-	signal tb_finished          : boolean := false;
+    signal tb_finished          : boolean := false;
     signal clk                  : std_logic := '0';
     signal reset                : std_logic := '0';
     signal perform_jump         : std_logic := '0';
@@ -56,7 +56,7 @@ begin
         procedure check_outputs(
             exp_addr : natural;
             exp_instr : std_logic_vector(7 downto 0)
-		) is
+        ) is
         begin
             assert memory_address = std_logic_vector(to_unsigned(exp_addr, 8))
                 report "Address error! Expected: " & to_string(exp_addr) & 
@@ -127,7 +127,7 @@ begin
         check_outputs(1, "11001100");
         
         report "Testbench completed";
-		tb_finished <= true;
+        tb_finished <= true;
         wait;
     end process test_proc;
 

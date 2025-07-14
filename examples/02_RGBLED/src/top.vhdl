@@ -28,7 +28,7 @@ entity top is
         rot_raw_b   : in std_logic;
 
         --! RGB-LED serial data output
-        rgbdata     : out std_logic	
+        rgbdata     : out std_logic
     );
 end entity top;
 
@@ -142,7 +142,7 @@ begin
     --! Cycle Colors Module
     cycle_colors_inst : entity work.cycle_colors
         port map (
-            clk	    => clk,
+            clk     => clk,
             reset   => reset,
             inc_col => rotary_inc,
             dec_col => rotary_dec,

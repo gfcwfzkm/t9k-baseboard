@@ -142,7 +142,7 @@ begin
                 if (cycle_counter_reg = 0) then
                     if (bit_counter_reg = 0) then
                         state_next <= STATE_IDLE;
-                    else	
+                    else
                         bit_counter_next <= bit_counter_reg - 1;
 
                         if (colordata_reg(COLORDATA_WIDTH-1) = '0') then

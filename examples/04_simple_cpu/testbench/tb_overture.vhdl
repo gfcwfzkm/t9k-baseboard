@@ -109,15 +109,15 @@ architecture behavior of tb_overture is
         x"44",   -- ADD (R3 = R1 + R2)
         x"AC",   -- COPY R5, R4 (current = next)
         x"9D",   -- COPY R3, R5 (next = sum)
-		x"01",   -- LI 1
-		x"81",   -- COPY R0, R1
-		x"B2",   -- COPY R6, R2
-		x"44",   -- ADD (R3 = R1 + R2)
-		x"9E",   -- COPY R3, R6 (increment I/O address)
-		x"07",   -- LI 7 (jump to loop start and to check if we got 8 values)
-		x"81",   -- COPY R0, R1 (R1 = 7)
-		--x"9A",   -- COPY R3, R2 (R2 = IOADDR)
-		x"45",   -- SUB (R3 = R1 - R2)
+        x"01",   -- LI 1
+        x"81",   -- COPY R0, R1
+        x"B2",   -- COPY R6, R2
+        x"44",   -- ADD (R3 = R1 + R2)
+        x"9E",   -- COPY R3, R6 (increment I/O address)
+        x"07",   -- LI 7 (jump to loop start and to check if we got 8 values)
+        x"81",   -- COPY R0, R1 (R1 = 7)
+        --x"9A",   -- COPY R3, R2 (R2 = IOADDR)
+        x"45",   -- SUB (R3 = R1 - R2)
         x"C5",   -- JMP if R3 != 0 (to loop start if we have less than 8 values)
         x"FF"    -- HALT once 8 values are output
     );
@@ -132,28 +132,28 @@ architecture behavior of tb_overture is
     signal test_num : integer := 1;
     signal fib_count : integer := 0;
 
-	-- Testbench finished signal
-	signal tb_finished : boolean := false;
+    -- Testbench finished signal
+    signal tb_finished : boolean := false;
     
 begin
 
     -- Instantiate the Overture CPU
     DUT: entity work.overture
-		port map (
-        	clk_i                  => clk_i,
-        	reset_i                => reset_i,
-        	memory_data_i          => memory_data_i,
-        	memory_address_o       => memory_address_o,
-        	io_address_o           => io_address_o,
-        	io_data_read_i         => io_data_read_i,
-        	io_data_write_o        => io_data_write_o,
-        	io_data_write_enable_o => io_data_write_enable_o,
-			io_data_read_enable_o  => open,
-        	cpu_halted_o           => cpu_halted_o
+        port map (
+            clk_i                  => clk_i,
+            reset_i                => reset_i,
+            memory_data_i          => memory_data_i,
+            memory_address_o       => memory_address_o,
+            io_address_o           => io_address_o,
+            io_data_read_i         => io_data_read_i,
+            io_data_write_o        => io_data_write_o,
+            io_data_write_enable_o => io_data_write_enable_o,
+            io_data_read_enable_o  => open,
+            cpu_halted_o           => cpu_halted_o
     );
     
     -- Clock generation
-	clk_i <= not clk_i after clk_period/2 when not tb_finished else '0';
+    clk_i <= not clk_i after clk_period/2 when not tb_finished else '0';
     
     -- Memory read process
     mem_read: process(memory_address_o, memory)
@@ -168,15 +168,15 @@ begin
         variable addr_int : integer;
     begin
         -- I/O read
-		addr_int := to_integer(unsigned(io_address_o));
+        addr_int := to_integer(unsigned(io_address_o));
         io_data_read_i <= io_memory(addr_int);
         
-		if rising_edge(clk_i) then  
+        if rising_edge(clk_i) then  
             -- I/O write
             if io_data_write_enable_o = '1' then
-				-- Report the address and data written
-				report "Address: " & integer'image(addr_int) & 
-						", Data Written: " & to_string(io_data_write_o);
+                -- Report the address and data written
+                report "Address: " & integer'image(addr_int) & 
+                        ", Data Written: " & to_string(io_data_write_o);
 
                 io_memory(addr_int) <= io_data_write_o;
                 
@@ -240,7 +240,7 @@ begin
         -- Initialize inputs
         reset_i <= '1';
         wait for clk_period * 2;
-		wait until rising_edge(clk_i);
+        wait until rising_edge(clk_i);
         
         -- Test 1: Load Immediate and Copy
         report "Starting Test 1: Load Immediate and Copy";
@@ -290,8 +290,8 @@ begin
         end loop;
         
         report "All tests completed" severity note;
-		tb_finished <= true;
+        tb_finished <= true;
         wait;
     end process;
-	
+    
 end architecture;

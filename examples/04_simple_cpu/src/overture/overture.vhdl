@@ -81,8 +81,8 @@ entity overture is
         io_data_write_o         : out std_logic_vector(7 downto 0);
         --! I/O data write enable output for controlling write operations to I/O
         io_data_write_enable_o  : out std_logic;
-		--! I/O data read enable signal to let the I/O module know that data is being read
-		io_data_read_enable_o   : out std_logic;
+        --! I/O data read enable signal to let the I/O module know that data is being read
+        io_data_read_enable_o   : out std_logic;
 
         --! Halted CPU output signal - if active, the CPU will not execute further instructions
         cpu_halted_o            : out std_logic
@@ -132,9 +132,24 @@ architecture rtl of overture is
     --! Register data, going from the write-back unit to the register file
     signal write_data_WB_RF             : std_logic_vector(7 downto 0);
 
+    --! CPU halted register, used to sanitize the status signal from glitches
+    signal cpu_halted_reg               : std_logic := '0';
+
 begin
 
-    cpu_halted_o <= cpu_halt_DE_FE;
+    cpu_halted_o <= cpu_halted_reg;
+
+    DEGLITCH_CPU_HALTED : process(clk_i, reset_i)
+    begin
+        if rising_edge(clk_i) then
+            if reset_i = '1' then
+                cpu_halted_reg <= '0';
+            else
+                cpu_halted_reg <= cpu_halt_DE_FE;
+            end if;
+        end if;
+    end process DEGLITCH_CPU_HALTED;
+
 
     FETCH_UNIT : entity work.fetch(rtl)
         port map (
@@ -193,15 +208,15 @@ begin
     );
 
     WRITE_BACK_UNIT : entity work.write_back
-    	port map (
-        	instruction_type_i          => instruction_type_EX_WB,
-        	dst_reg_i                   => dst_reg_addr_EX_WB,
-        	result_data_i               => result_data_EX_WB,
-        	register_data_o             => write_data_WB_RF,
-        	registers_write_enable_o    => register_write_enable_WB_RF,
-        	registers_write_address_o   => write_address_WB_RF,
-        	io_data_o                   => io_data_write_o,
-        	io_data_write_enable_o      => io_data_write_enable_o
+        port map (
+            instruction_type_i          => instruction_type_EX_WB,
+            dst_reg_i                   => dst_reg_addr_EX_WB,
+            result_data_i               => result_data_EX_WB,
+            register_data_o             => write_data_WB_RF,
+            registers_write_enable_o    => register_write_enable_WB_RF,
+            registers_write_address_o   => write_address_WB_RF,
+            io_data_o                   => io_data_write_o,
+            io_data_write_enable_o      => io_data_write_enable_o
     );
 
 end architecture;

@@ -23,21 +23,21 @@ end tb_barrel_shifter;
 
 architecture testbench of tb_barrel_shifter is
 
-	--! Bit-Width of the barrel shifter
+    --! Bit-Width of the barrel shifter
     constant WIDTH : positive := 8;
-	--! Number of bits needed to represent the shift amount
+    --! Number of bits needed to represent the shift amount
     constant SHIFT_BITS : positive := integer(ceil(log2(real(WIDTH)))) + 1;
-	--! Number of random tests to run
+    --! Number of random tests to run
     constant NUM_RANDOM_TESTS : positive := 500;
 
-	--! Input vector going into the barrel shifter
+    --! Input vector going into the barrel shifter
     signal input_vector : std_logic_vector(WIDTH-1 downto 0);
-	--! Shift amount (signed, two's complement) to shift the input vector
+    --! Shift amount (signed, two's complement) to shift the input vector
     signal shift_amount : signed(SHIFT_BITS-1 downto 0);
-	--! Output vector from the barrel shifter
+    --! Output vector from the barrel shifter
     signal output_vector : std_logic_vector(WIDTH-1 downto 0);
 
-	--! Function to calculate the expected output of the barrel shifter
+    --! Function to calculate the expected output of the barrel shifter
     function expected_shift (
         input_vec : std_logic_vector;
         shift : integer
@@ -51,7 +51,7 @@ architecture testbench of tb_barrel_shifter is
         
         temp := (others => '0');  -- Default to zero vector
         
-		if shift >= 0 then  -- Left shift
+        if shift >= 0 then  -- Left shift
             temp := input_vector(len-1-abs_shift downto 0) & (abs_shift-1 downto 0 => '0');
         else   -- Right shift
             temp := (abs_shift-1 downto 0 => '0') & input_vector(len-1 downto abs_shift);
@@ -73,22 +73,22 @@ begin
             output_vector_o => output_vector
     );
 
-	--! Stimulus process to apply test vectors
+    --! Stimulus process to apply test vectors
     stimulus : process
         variable error_count : natural := 0;
         variable seed1, seed2 : positive := 42;
         variable rand_real : real;
         variable rand_int : integer;
-		variable rand_input_vector : std_logic_vector(WIDTH-1 downto 0);
+        variable rand_input_vector : std_logic_vector(WIDTH-1 downto 0);
         
-		--! Procedure to run a test case and check the output
+        --! Procedure to run a test case and check the output
         procedure run_test(
             input_val : std_logic_vector;
             shift_val : integer;
             variable err_cnt : inout natural
         ) is
             variable exp_vec : std_logic_vector(WIDTH-1 downto 0);
-			variable sh_amount : signed(7 downto 0);
+            variable sh_amount : signed(7 downto 0);
         begin
             sh_amount := to_signed(shift_val, sh_amount'length);
 
@@ -165,13 +165,13 @@ begin
             uniform(seed1, seed2, rand_real);
             rand_int := integer(floor(rand_real * real(2 * (WIDTH-1)))) - (WIDTH-1);
             
-			-- Apply the input vector and check the output
-			run_test(rand_input_vector, rand_int, error_count);
+            -- Apply the input vector and check the output
+            run_test(rand_input_vector, rand_int, error_count);
         end loop;
         
         -- Final report
         report "TEST COMPLETE. Errors: " & integer'image(error_count);
         wait;
     end process;
-	
+    
 end testbench;

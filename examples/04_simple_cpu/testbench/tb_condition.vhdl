@@ -242,10 +242,10 @@ begin
         end loop;
 
         -- If the hand-coded tests already fail, abort simulation
-		if errors > 0 then
-			report "turing_complete: " & integer'image(errors) & " errors found!" severity failure;
-			wait;  -- Stop simulation on failure
-		end if;
+        if errors > 0 then
+            report "turing_complete: " & integer'image(errors) & " errors found!" severity failure;
+            wait;  -- Stop simulation on failure
+        end if;
         
         -- Random tests
         for op_val in 0 to 7 loop
@@ -286,5 +286,5 @@ begin
         -- Stop the simulation
         wait;
     end process;
-	
+    
 end architecture behavior;

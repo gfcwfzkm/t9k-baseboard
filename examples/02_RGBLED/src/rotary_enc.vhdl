@@ -69,7 +69,7 @@ begin
     DEBOUNCE_B : entity work.debouncer
         generic map (
             DEBOUNCE_COUNTER_MAX => DEBOUNCE_COUNTER_MAX
-        )	
+        )
         port map (
             clk => clk,
             reset => reset,
@@ -84,7 +84,7 @@ begin
     DEBOUNCE_SW : entity work.debouncer
         generic map (
             DEBOUNCE_COUNTER_MAX => DEBOUNCE_COUNTER_MAX
-        )	
+        )
         port map (
             clk => clk,
             reset => reset,

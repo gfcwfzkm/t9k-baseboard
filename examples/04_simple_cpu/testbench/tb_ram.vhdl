@@ -1,4 +1,13 @@
 -- Dependency: src/peripherals/ram.vhdl
+--! @title RAM Peripheral Testbench
+--! @author Pascal G. (gfcwfzkm)
+--! @version 1.0
+--! @date 09.07.2025
+--! @brief Testbench for the RAM peripheral
+--!
+--! This testbench verifies the functionality of the RAM peripheral.
+--! It includes tests for basic read/write operations, address boundaries, and enable combinations.
+--!
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -58,7 +67,7 @@ begin
         variable expected_data : std_logic_vector(WORD_WIDTH-1 downto 0);
         variable error_count : integer := 0;
         
-		-- Helper procedure to check output
+        -- Helper procedure to check output
         procedure check_output(
             expected : in std_logic_vector(WORD_WIDTH-1 downto 0);
             msg : in string
@@ -146,7 +155,7 @@ begin
         read_enable_i <= '1';
         check_output(x"33", "Write without read enable followed by read");
         
-		-- Test Case 6: Out of bounds write/read 
+        -- Test Case 6: Out of bounds write/read 
         report "Starting Test Case 7: Out of bounds write/read";
         -- First address
         address_i <= std_logic_vector(unsigned(PERIPHERAL_ADDRESS) + to_unsigned(RAM_SIZE, 8));  -- Out of bounds

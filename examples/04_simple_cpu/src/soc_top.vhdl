@@ -17,8 +17,10 @@ entity soc_top is
 
         --! UART transmit output
         uart_tx                 : out std_logic;
-        --! Parellel LEDs output, active-high. 6th LED shows the CPU halt state
-        leds                    : out std_logic_vector(5 downto 0);
+        --! Parellel LEDs output, active-low
+        leds_n                  : out std_logic_vector(4 downto 0);
+        --! CPU halt signal, active low
+        cpu_halted_n            : out std_logic;
         --! Digital, serial RGB LED output
         rgbled_ser              : out std_logic
     );
@@ -38,17 +40,24 @@ architecture rtl of soc_top is
     signal io_data_to_cpu       : std_logic_vector(7 downto 0);
     signal io_data_write_enable : std_logic;
     signal io_data_read_enable  : std_logic;
+
+    signal leds                 : std_logic_vector(4 downto 0);
     signal cpu_halted           : std_logic;
+    signal joystick             : std_logic_vector(4 downto 0);
+    signal uart_rx              : std_logic;
 
 begin
 
-    -- 6th LED shows the CPU halt state
-    leds(5) <= cpu_halted;
-
     -- Assign sanitized signals
-    reset <= sanitizing_reg(2)(0);
+    reset       <= sanitizing_reg(2)(0);
+    joystick    <= sanitizing_reg(2)(5 downto 1);
+    uart_rx     <= sanitizing_reg(2)(6);
 
-    --! Sanitize the input signals
+    -- Assign outputs, invert if needed for active-low outputs
+    leds_n          <= not leds;
+    cpu_halted_n    <= not cpu_halted;
+
+    --! Sanitize the input signals by sending them through a two-stage register chain
     INPUT_SANITIZER : process(clk)
     begin
         if rising_edge(clk) then
@@ -60,7 +69,7 @@ begin
         end if;
     end process;
 
-    --! The simple Overture CPU
+    --! The simple 8-bit Overture CPU from the game Turing Complete
     OVERTURE_CPU : entity work.overture(rtl)
         port map (
             clk_i                   => clk,
@@ -71,7 +80,7 @@ begin
             io_data_read_i          => io_data_to_cpu,
             io_data_write_o         => io_data_from_cpu,
             io_data_write_enable_o  => io_data_write_enable,
-			io_data_read_enable_o   => io_data_read_enable,
+            io_data_read_enable_o   => io_data_read_enable,
             cpu_halted_o            => cpu_halted
     );
 
@@ -87,10 +96,10 @@ begin
         port map (
             clk                     => clk,
             reset                   => reset,
-            joystick                => sanitizing_reg(2)(5 downto 1),
-            uart_rx                 => sanitizing_reg(2)(6),
+            joystick                => joystick,
+            uart_rx                 => uart_rx,
             uart_tx                 => uart_tx,
-            leds                    => leds(4 downto 0),
+            leds                    => leds,
             rgbled_ser              => rgbled_ser,
             io_address              => io_address,
             io_data_write           => io_data_from_cpu,

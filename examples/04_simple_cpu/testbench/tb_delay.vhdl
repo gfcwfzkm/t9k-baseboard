@@ -1,4 +1,14 @@
 -- Dependency: src/peripherals/delay.vhdl
+--! @title Delay Peripheral Testbench
+--! @author Pascal G. (gfcwfzkm)
+--! @version 1.0
+--! @date 09.07.2025
+--! @brief Testbench for the delay peripheral
+--!
+--! This testbench verifies the functionality of the delay peripheral.
+--! The delay peripheral is just a counter that decrements down to zero, after
+--! having been written with a value.
+--!
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -50,7 +60,7 @@ begin
 
     -- Test process
     test_process: process
-    	variable error_count : integer := 0;
+        variable error_count : integer := 0;
 
         -- Helper procedure to check output
         procedure check_output(
@@ -169,9 +179,9 @@ begin
 
         -- Invalid address
         address_i <= x"FF";
-		wait for 1 ns;  -- Allow time for address change
+        wait for 1 ns;  -- Allow time for address change
         check_output(x"00", "Invalid address should return 0");
-		wait for 1 ns;  -- Allow time for read to complete
+        wait for 1 ns;  -- Allow time for read to complete
         read_enable_i <= '0';
 
         -- Final report

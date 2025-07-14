@@ -173,11 +173,11 @@ begin
             end if;
         end loop;
 
-		if errors > 0 then
-			report "Fixed tests completed with " & integer'image(errors) & " errors." severity failure;
-		else
-			report "Fixed tests passed successfully." severity note;
-		end if;
+        if errors > 0 then
+            report "Fixed tests completed with " & integer'image(errors) & " errors." severity failure;
+        else
+            report "Fixed tests passed successfully." severity note;
+        end if;
 
         -- Random test cases
         report "Starting random test cases...";
@@ -185,7 +185,7 @@ begin
             uniform(seed1, seed2, rand);
             rand_num := integer(floor(rand * 256.0));
             fetched_instruction <= std_logic_vector(to_unsigned(rand_num, 8));
-			wait for 1 ns;
+            wait for 1 ns;
             expected := compute_expected(fetched_instruction);
             wait for 4 ns;
 
@@ -242,5 +242,5 @@ begin
         end if;
         wait;
     end process;
-	
+    
 end architecture;

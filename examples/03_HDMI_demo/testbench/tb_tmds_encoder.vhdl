@@ -27,21 +27,21 @@ end entity tb_tmds_encoder;
 
 architecture behavioral of tb_tmds_encoder is
     -- Constants
-    constant CLK_PERIOD : time := 10 ns;	--! Clock period for simulation
+    constant CLK_PERIOD : time := 10 ns;    --! Clock period for simulation
 
     -- Signals going to DUT
-    signal clk          : std_logic := '0';	--! Clock signal
-    signal reset        : std_logic := '1';	--! Reset signal, active high
-    signal disp_enable  : std_logic := '0';	--! Display enable signal, active high
-    signal hsync        : std_logic := '0';	--! Horizontal sync signal, active high
-    signal vsync        : std_logic := '0';	--! Vertical sync signal, active high
+    signal clk          : std_logic := '0'; --! Clock signal
+    signal reset        : std_logic := '1'; --! Reset signal, active high
+    signal disp_enable  : std_logic := '0'; --! Display enable signal, active high
+    signal hsync        : std_logic := '0'; --! Horizontal sync signal, active high
+    signal vsync        : std_logic := '0'; --! Vertical sync signal, active high
     --! Color data input signal, 8 bits wide
     signal color_data   : std_logic_vector(7 downto 0) := (others => '0');
     --! Signals coming from DUT, the encoded TMDS output
     signal tmds_encoded : std_logic_vector(9 downto 0);
     
     -- Testbench control
-    signal test_running : boolean := true;	--! Control signal to end simulation
+    signal test_running : boolean := true;  --! Control signal to end simulation
 begin
     --! Instantiate DUT
     dut: entity work.tmds_encoder(rtl)

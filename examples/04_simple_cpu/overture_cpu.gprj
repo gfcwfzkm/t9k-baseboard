@@ -21,6 +21,7 @@
         <File path="src/peripherals/soc_io.vhdl" type="file.vhdl" enable="1"/>
         <File path="src/rom.vhdl" type="file.vhdl" enable="1"/>
         <File path="src/soc_top.vhdl" type="file.vhdl" enable="1"/>
+        <File path="src/overture_cpu.cst" type="file.cst" enable="1"/>
         <File path="src/overture_soc.sdc" type="file.sdc" enable="1"/>
     </FileList>
 </Project>
