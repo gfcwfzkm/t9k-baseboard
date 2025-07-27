@@ -8,4 +8,4 @@ This directory contains example projects that demonstrate how to use the Tang Na
 
 - [HDMI Demo](03_HDMI_demo): A demo that shows how to use the HDMI output on the Tang Nano 9k board. It generates a simple test color pattern and displays the Swiss flag on a 1920x1080@30p HDMI display.
 
-- [Simple CPU](04_simple_cpu): A simple CPU that can execute a few instructions. It is a good starting point for learning how to build a CPU on the Tang Nano 9k board.
+- [Simple CPU](TC-Overture-CPU): A simple CPU that can execute a few instructions. It is a good starting point for learning how to build a CPU on the Tang Nano 9k board.
