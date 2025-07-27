@@ -522,6 +522,8 @@ Currently, only one program has been written, which works on both the [simulator
 
 Once all values have been calculated, the program will halt and wait for a reset.
 
+![Fibonacci GIF](images/fib_fpga.gif)
+
 Please take a look at the [fibonacci.s](soc_software/fibonacci.s) file, which contains the assembly code for the program. The program is written to make use of the assemblers features, such as labels, constants and macros.
 
 ## [12. Conclusion](#chapters)
@@ -530,18 +532,25 @@ Lets get to the ressource usage first! The Overture CPU has been somewhat writte
 
 ![Resource usage](images/simple_cpu.png)
 
-The Overture CPU uses 65 registers, 233 LUTs and 8 ALU elements. The I/O peripherals use an additional 172 registers, 213 LUTs and 75 ALU elements. Even better, the timing summary of the `Place & Route` step shows a maximum frequency of 31.972 MHz, ~5 MHz higher than the native 27 MHz oscillator attached to the FPGA. This turns out to faster than I expected, as the CPU has a very long data path from [ROM](src/rom.vhdl) to the [Register File](src/overture/registers.vhdl) and the round trip of the Register File itself.
+The Overture CPU uses 65 registers, 233 LUTs and 8 ALU elements. The I/O peripherals use an additional 172 registers, 213 LUTs and 75 ALU elements. Even better, the timing summary of the `Place & Route` step shows a maximum frequency of **31.972 MHz**, ~5 MHz higher than the native 27 MHz oscillator attached to the FPGA. This turns out to faster than I expected, as the CPU has a very long data path from [ROM](src/rom.vhdl) to the [Register File](src/overture/registers.vhdl) and the round trip of the Register File itself.
 
+The Overture CPU is a simple CPU, which can be written by a keen student in a week or two, more if they go down the rabbit holes of writing an assembler and disassembler. It is a good starting point to learn about CPU design, instruction set architectures and VHDL programming.
 
-But where to go from here? The Overture CPU is a simple CPU, which can be written by a keen student in a week or two, more if they go down the rabbit holes of writing an assembler and disassembler. It is a good starting point to learn about CPU design, instruction set architectures and VHDL programming.
-
-Personally, I'm quite happy with the result, even if it is not perfect. The CPU is simple enough to be easily understood but complex enough to perform actual instructions and interact with I/O devices. I'm not sure where I will continue from here... I could explore pipelining using this simple CPU or I could go towards a more complex and usable CPU design, such as a RISC-V CPU. I'm also very tempted to expand on the I/O peripherals, like adding a UART or a video text output peripheral. Time will tell how bored I'll get to go down these rabbit holes!
+Personally, I'm quite happy with the result, even if it is not perfect. The CPU is simple enough to be easily understood but complex enough to perform actual instructions and interact with I/O devices. I'm not sure where I will continue from here... I could explore pipelining using this simple CPU or I could go towards a more complex and usable CPU design, such as a RISC-V CPU. I'm also very tempted to expand on the I/O peripherals, like adding a UART or a video text output peripheral. Time will tell how bored I'll get to go down these rabbit holes.
 
 I hope this serves as a good introduction to the Overture CPU and its design. If you have any questions, suggestions or feedback, feel free to open an issue / discussion on the repository or contact me directly.
 
 ## [13. File Structure](#chapters)
 
 All testbenches are automated and can be run using the provided `run_testbenches.py` script, which uses the [NVC](https://github.com/nickg/nvc) as VHDL simulator - alternatively it can work with GHDL, but that has not been tested yet.
+
+The synthesis hierarchy is as follows:
+
+![Hierarchy](images/hierarchy.svg)
+
+With the testbenches (blue boxes), it looks like this:
+
+![Hierarchy with testbenches](images/hierarchy_testbenches.svg)
 
 The file structure of the Overture CPU project is as follows:
 
